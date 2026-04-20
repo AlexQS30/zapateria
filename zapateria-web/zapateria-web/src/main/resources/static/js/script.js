@@ -2,6 +2,12 @@
    FUNCIONALIDADES JAVASCRIPT
    ======================================== */
 
+// Modo estático por defecto: no consume backend en index.
+// Para activar integración, define: window.FOOTSTYLE_STATIC_MODE = false
+const isStaticMode = window.FOOTSTYLE_STATIC_MODE !== undefined
+    ? window.FOOTSTYLE_STATIC_MODE
+    : true;
+
 document.addEventListener('DOMContentLoaded', function() {
     // Inicializar todas las funcionalidades
     initNavigation();
@@ -11,13 +17,15 @@ document.addEventListener('DOMContentLoaded', function() {
     initCart();
     initSearch();
     initMobileMenu();
-    // Load categories and products from backend
-    fetchCategories();
-    fetchProducts();
+    // Solo cargar desde backend cuando integración está activa
+    if (!isStaticMode) {
+        fetchCategories();
+        fetchProducts();
+    }
     // If on product detail page, load detail
     const params = new URLSearchParams(window.location.search);
     const pid = params.get('id') || params.get('productoId');
-    if (document.querySelector('.product-detail') && pid) {
+    if (!isStaticMode && document.querySelector('.product-detail') && pid) {
         fetchProductDetail(pid);
     }
 });

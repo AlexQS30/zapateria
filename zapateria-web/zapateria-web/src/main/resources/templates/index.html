@@ -4,13 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FootStyle - Zapatos y Accesorios</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
     <style>
-        :root { --primary: #1a1a1a; --secondary: #d4a574; --accent: #ff6b6b; --light: #f9f9f9; }
+        :root {
+            --primary: #101214;
+            --secondary: #c4a27e;
+            --accent: #b9786a;
+            --light: #f5f2ee;
+            --surface: #eee8e2;
+            --text-soft: #56656d;
+            --hero-overlay: rgba(8, 10, 12, 0.46);
+            --hero-dot: rgba(255, 255, 255, 0.55);
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; color: #333; background: white; }
+        body { font-family: 'Manrope', 'Segoe UI', Tahoma, Geneva, sans-serif; color: #333; background: white; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
 
         /* Top Bar */
@@ -57,6 +69,7 @@
             font-weight: 700;
             color: var(--primary);
             letter-spacing: 1px;
+            font-family: 'Cormorant Garamond', serif;
         }
         .navbar-search {
             flex: 1;
@@ -130,23 +143,119 @@
             color: var(--primary);
         }
 
-        /* Hero */
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Hero Slider */
+        .hero-slider {
+            position: relative;
+            height: clamp(500px, 72vh, 760px);
+            overflow: hidden;
             color: white;
-            padding: 120px 20px;
+            background: #20272b;
+        }
+        .hero-track {
+            position: relative;
+            height: 100%;
+        }
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(1.04);
+            transition: opacity 0.7s ease, transform 0.9s ease;
+            pointer-events: none;
+        }
+        .hero-slide.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+        .hero-slide::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, var(--hero-overlay) 15%, rgba(0, 0, 0, 0.12) 100%);
+        }
+        .hero-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            inset: 0;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 760px;
             text-align: center;
+            padding: 64px 20px 30px;
         }
-        .hero h1 {
-            font-size: 52px;
+        .hero-kicker {
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-size: 0.75rem;
             font-weight: 700;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 14px;
         }
-        .hero p {
-            font-size: 22px;
-            margin-bottom: 40px;
-            opacity: 0.95;
+        .hero-content h1 {
+            font-size: clamp(2.2rem, 5.5vw, 3.7rem);
+            margin-bottom: 18px;
+            font-family: 'Cormorant Garamond', serif;
+            line-height: 1.06;
+            font-weight: 700;
+        }
+        .hero-content p {
+            font-size: clamp(1rem, 2.3vw, 1.2rem);
+            margin-bottom: 28px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .hero-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+            backdrop-filter: blur(4px);
+            cursor: pointer;
+            z-index: 3;
+            transition: background 0.25s ease;
+        }
+        .hero-control:hover { background: rgba(255, 255, 255, 0.38); }
+        .hero-control.prev { left: 22px; }
+        .hero-control.next { right: 22px; }
+        .hero-dots {
+            position: absolute;
+            left: 50%;
+            bottom: 24px;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 9px;
+            z-index: 3;
+        }
+        .hero-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: none;
+            background: var(--hero-dot);
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .hero-dot.active {
+            background: #ffffff;
+            transform: scale(1.15);
         }
 
         /* Buttons */
@@ -212,7 +321,7 @@
         .category-image {
             width: 100%;
             height: 280px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #d8ccc0 0%, #eee7df 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -315,56 +424,164 @@
             width: 100%;
             font-size: 13px;
         }
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        .product-image {
+            position: relative;
+            overflow: hidden;
+            background: #f5f2ee;
+        }
+        .product-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(16, 18, 20, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .product-card:hover .product-overlay {
+            opacity: 1;
+        }
+        .btn-icon {
+            background: var(--secondary);
+            color: var(--primary);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-icon:hover {
+            background: var(--accent);
+            transform: scale(1.05);
+        }
+        .product-category {
+            font-size: 12px;
+            color: var(--secondary);
+            margin: 5px 0;
+            font-weight: 500;
+        }
+        .product-prices {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .price-original {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 14px;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .section-header h2 {
+            font-size: 42px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--text-soft);
+        }
+        .featured {
+            padding: 80px 20px;
+            background: white;
+        }
 
         /* Promo */
-        .promo {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 60px 20px;
-            text-align: center;
-            margin: 60px 0;
+        .promo-section {
+            padding: 50px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, #1a1f23 100%);
         }
-        .promo h3 {
-            font-size: 36px;
+        .promo-card {
+            background: linear-gradient(135deg, var(--secondary) 0%, #b9786a 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            box-shadow: 0 10px 30px rgba(196, 162, 126, 0.2);
+        }
+        .promo-icon {
+            font-size: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .promo-content h3 {
+            font-size: 28px;
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
+        }
+        .promo-content p {
+            font-size: 16px;
+            opacity: 0.95;
         }
 
         /* Beneficios */
         .benefits {
             padding: 80px 20px;
+            background: linear-gradient(180deg, #f5f2ee 0%, white 100%);
         }
         .benefits-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 30px;
         }
         .benefit-card {
             text-align: center;
-            padding: 35px;
-            background: var(--light);
+            padding: 40px;
+            background: white;
             border-radius: 12px;
-            transition: all 0.3s;
+            border: 2px solid transparent;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
         .benefit-card:hover {
-            background: var(--primary);
-            color: white;
+            border-color: var(--secondary);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(196, 162, 126, 0.15);
         }
-        .benefit-card i {
-            font-size: 48px;
-            color: var(--secondary);
-            margin-bottom: 20px;
-        }
-        .benefit-card:hover i {
+        .benefit-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
             color: white;
+            transition: all 0.3s;
+        }
+        .benefit-card:hover .benefit-icon {
+            transform: scale(1.1) rotate(5deg);
         }
         .benefit-card h3 {
             font-size: 18px;
             margin-bottom: 12px;
-            font-weight: 600;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .benefit-card p {
+            font-size: 14px;
+            color: var(--text-soft);
+            line-height: 1.6;
         }
 
-        /* Footer */
         .footer {
             background: var(--primary);
             color: white;
@@ -397,6 +614,108 @@
             font-size: 14px;
         }
 
+        /* Testimonios */
+        .testimonials {
+            padding: 80px 20px;
+            background: white;
+        }
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .testimonial-card {
+            background: var(--surface);
+            padding: 30px;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 4px solid var(--secondary);
+        }
+        .testimonial-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        .testimonial-stars {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            color: #ffc107;
+            font-size: 14px;
+        }
+        .testimonial-text {
+            font-size: 15px;
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-style: italic;
+        }
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+        .testimonial-author h4 {
+            font-size: 15px;
+            margin-bottom: 3px;
+            color: var(--primary);
+        }
+        .testimonial-author p {
+            font-size: 13px;
+            color: var(--text-soft);
+        }
+
+        /* Newsletter */
+        .newsletter {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, #1a1f23 100%);
+        }
+        .newsletter-content {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .newsletter-content h2 {
+            font-size: 38px;
+            color: white;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        .newsletter-content > p {
+            font-size: 16px;
+            color: rgba(255,255,255,0.85);
+            margin-bottom: 30px;
+        }
+        .newsletter-form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .newsletter-form input {
+            flex: 1;
+            min-width: 250px;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            background: white;
+        }
+        .newsletter-form button {
+            padding: 14px 30px;
+            white-space: nowrap;
+        }
+
         /* WhatsApp */
         .whatsapp {
             position: fixed;
@@ -421,17 +740,42 @@
             transform: scale(1.1);
         }
 
+        .offers {
+            padding: 80px 20px;
+            background: linear-gradient(140deg, #1a1f23 0%, #2b3338 100%);
+        }
+        .offers-title {
+            text-align: center;
+            font-size: 38px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            color: #fdfdfd;
+        }
+        .offers-subtitle {
+            text-align: center;
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 60px;
+        }
+        .offer-percent {
+            margin-bottom: 10px;
+            color: #8f5f55;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
         @media (max-width: 768px) {
             .navbar .container { flex-wrap: wrap; gap: 15px; }
             .navbar-search { max-width: 100%; flex-basis: 100%; }
-            .hero h1 { font-size: 36px; }
+            .hero-slider { min-height: 64vh; }
+            .hero-control { display: none; }
             .products-grid { grid-template-columns: repeat(2, 1fr); }
             .menu li a { font-size: 10px; padding: 12px 8px; }
         }
 
         @media (max-width: 480px) {
             .navbar-brand h1 { font-size: 24px; }
-            .hero { padding: 60px 20px; }
+            .hero-content { padding-top: 44px; }
             .products-grid { grid-template-columns: 1fr; }
         }
 
@@ -444,12 +788,11 @@
         <div class="container">
             <div class="top-bar-left">
                 <span class="top-bar-item"><i class="fas fa-phone"></i> +51 949 259 138</span>
-                <span class="top-bar-item"><i class="fas fa-envelope"></i> info@footstyle.com</span>
+                <span class="top-bar-item"><i class="fas fa-truck"></i> Envio gratis desde S/. 199</span>
             </div>
             <div class="top-bar-right">
-                <a href="#" class="top-bar-item"><i class="fas fa-question-circle"></i> Ayuda</a>
-                <a href="javascript:void(0)" onclick="openLoginModal()" class="top-bar-item" th:if="${session.usuario == null}"><i class="fas fa-sign-in-alt"></i> Ingresar</a>
-                <a href="#" class="top-bar-item" th:if="${session.usuario != null}"><i class="fas fa-user"></i> <span th:text="${session.usuario}"></span></a>
+                <a class="top-bar-item" href="#"><i class="fas fa-circle-question"></i> Ayuda</a>
+                <a class="top-bar-item" href="#"><i class="fas fa-location-dot"></i> Tiendas</a>
             </div>
         </div>
     </div>
@@ -458,7 +801,7 @@
     <nav class="navbar">
         <div class="container">
             <div class="navbar-brand">
-                <h1><i class="fas fa-shoe-prints"></i> FootStyle</h1>
+                <h1>FootStyle</h1>
             </div>
 
             <div class="navbar-search">
@@ -469,7 +812,9 @@
             <div class="navbar-actions">
                 <div class="action-item">
                     <i class="fas fa-heart"></i>
-                    <span class="badge">0</span>
+                </div>
+                <div class="action-item" onclick="openLoginModal()" title="Iniciar sesión" role="button" tabindex="0">
+                    <i class="fas fa-user"></i>
                 </div>
                 <div class="action-item">
                     <i class="fas fa-shopping-cart"></i>
@@ -491,11 +836,56 @@
         </div>
     </nav>
 
-    <!-- Hero -->
-    <section class="hero">
-        <h1>BIENVENIDO A FOOTSTYLE</h1>
-        <p>Los Mejores Zapatos y Accesorios para tu Estilo</p>
-        <a href="#categorias" class="btn btn-primary"><i class="fas fa-arrow-down"></i> Explorar Ahora</a>
+    <!-- Hero Slider -->
+    <section class="hero-slider" id="hero-slider" aria-label="Colecciones destacadas">
+        <div class="hero-track">
+            <article class="hero-slide active">
+                <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1400&auto=format&fit=crop" alt="Nueva colección de calzado urbano">
+                <div class="hero-content">
+                    <p class="hero-kicker">Nueva temporada</p>
+                    <h1>Diseño premium para cada paso del día</h1>
+                    <p>Descubre una selección curada de zapatillas y zapatos con estilo contemporáneo y máxima comodidad.</p>
+                    <div class="hero-actions">
+                        <a href="#categorias" class="btn btn-primary"><i class="fas fa-compass"></i> Explorar colección</a>
+                        <a href="#ofertas" class="btn btn-secondary">Ver ofertas</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="hero-slide">
+                <img src="https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?q=80&w=1400&auto=format&fit=crop" alt="Calzado formal para oficina y eventos">
+                <div class="hero-content">
+                    <p class="hero-kicker">Línea formal</p>
+                    <h1>Elegancia sobria para oficina y eventos</h1>
+                    <p>Modelos de cuero con acabados finos, pensados para elevar tu presencia sin sacrificar confort.</p>
+                    <div class="hero-actions">
+                        <a href="/hombre" class="btn btn-primary">Ver calzado formal</a>
+                        <a href="/mujer" class="btn btn-outline" style="color:#fff;border-color:#fff;">Línea mujer</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="hero-slide">
+                <img src="https://images.unsplash.com/photo-1511556670410-f35aa76f1f6d?q=80&w=1400&auto=format&fit=crop" alt="Accesorios y tendencias en moda">
+                <div class="hero-content">
+                    <p class="hero-kicker">Accesorios</p>
+                    <h1>Completa tu look con piezas clave</h1>
+                    <p>Desde bolsos hasta complementos esenciales, combina funcionalidad y estética en una sola compra.</p>
+                    <div class="hero-actions">
+                        <a href="/accesorios" class="btn btn-primary">Comprar accesorios</a>
+                        <a href="#featured" class="btn btn-secondary">Productos destacados</a>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <button type="button" class="hero-control prev" aria-label="Slide anterior"><i class="fas fa-chevron-left"></i></button>
+        <button type="button" class="hero-control next" aria-label="Siguiente slide"><i class="fas fa-chevron-right"></i></button>
+        <div class="hero-dots" aria-label="Indicadores de slide">
+            <button class="hero-dot active" type="button" aria-label="Ir al slide 1"></button>
+            <button class="hero-dot" type="button" aria-label="Ir al slide 2"></button>
+            <button class="hero-dot" type="button" aria-label="Ir al slide 3"></button>
+        </div>
     </section>
 
     <!-- Categorías -->
@@ -507,7 +897,7 @@
             <div class="categories-grid">
                 <div class="category-card">
                     <div class="category-image">
-                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop" alt="Calzados Hombre" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="https://images.pexels.com/photos/3932499/pexels-photo-3932499.jpeg?w=400&h=400&fit=crop" alt="Calzados Hombre" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                     <div class="category-info">
                         <h3>Calzados Hombre</h3>
@@ -518,7 +908,7 @@
 
                 <div class="category-card">
                     <div class="category-image">
-                        <img src="https://images.unsplash.com/photo-1546261150-ce1b0db87a6f?w=400&h=400&fit=crop" alt="Calzados Mujer" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="https://images.pexels.com/photos/3769714/pexels-photo-3769714.jpeg?w=400&h=400&fit=crop" alt="Calzados Mujer" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                     <div class="category-info">
                         <h3>Calzados Mujer</h3>
@@ -529,7 +919,7 @@
 
                 <div class="category-card">
                     <div class="category-image">
-                        <img src="https://images.unsplash.com/photo-1525966222134-fcebf88b98f1?w=400&h=400&fit=crop" alt="Calzados Niños" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="https://images.pexels.com/photos/4112021/pexels-photo-4112021.jpeg?w=400&h=400&fit=crop" alt="Calzados Niños" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                     <div class="category-info">
                         <h3>Calzados Niños</h3>
@@ -540,7 +930,7 @@
 
                 <div class="category-card">
                     <div class="category-image">
-                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop" alt="Accesorios" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="https://images.pexels.com/photos/2769274/pexels-photo-2769274.jpeg?w=400&h=400&fit=crop" alt="Accesorios" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                     <div class="category-info">
                         <h3>Accesorios</h3>
@@ -553,22 +943,22 @@
     </section>
 
     <!-- Ofertas Especiales -->
-    <section class="ofertas" id="ofertas" style="padding: 80px 20px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);">
+    <section class="ofertas offers" id="ofertas">
         <div class="container">
-            <h2 style="text-align: center; font-size: 38px; margin-bottom: 20px; font-weight: 700; color: white;">🔥 OFERTAS ESPECIALES</h2>
-            <p style="text-align: center; font-size: 18px; color: rgba(255,255,255,0.9); margin-bottom: 60px;">Descuentos increíbles en nuestras categorías</p>
+            <h2 class="offers-title">Ofertas especiales</h2>
+            <p class="offers-subtitle">Descuentos destacados en tus categorías favoritas</p>
             
             <div class="categories-grid">
                 <!-- Oferta Hombre -->
                 <div class="category-card" style="position: relative;">
                     <div class="category-image" style="position: relative;">
-                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop" alt="Oferta Hombre" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="https://images.pexels.com/photos/3932499/pexels-photo-3932499.jpeg?w=400&h=400&fit=crop" alt="Oferta Hombre" style="width: 100%; height: 100%; object-fit: cover;">
                         <div style="position: absolute; top: 15px; right: 15px; background: #FFD700; color: #333; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">-35%</div>
                     </div>
                     <div class="category-info" style="background: rgba(255,255,255,0.95);">
                         <h3 style="color: #333;">Calzados Hombre</h3>
                         <p style="color: #666;">Zapatos elegantes en oferta</p>
-                        <div style="margin-bottom: 10px; color: #ff6b6b; font-weight: bold; font-size: 16px;">Hasta 35% OFF</div>
+                        <div class="offer-percent">Hasta 35% OFF</div>
                         <a href="/hombre" class="btn btn-secondary">Ver Oferta</a>
                     </div>
                 </div>
@@ -576,13 +966,13 @@
                 <!-- Oferta Mujer -->
                 <div class="category-card" style="position: relative;">
                     <div class="category-image" style="position: relative;">
-                        <img src="https://images.unsplash.com/photo-1546261150-ce1b0db87a6f?w=400&h=400&fit=crop" alt="Oferta Mujer" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="https://images.pexels.com/photos/3769714/pexels-photo-3769714.jpeg?w=400&h=400&fit=crop" alt="Oferta Mujer" style="width: 100%; height: 100%; object-fit: cover;">
                         <div style="position: absolute; top: 15px; right: 15px; background: #FFD700; color: #333; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">-40%</div>
                     </div>
                     <div class="category-info" style="background: rgba(255,255,255,0.95);">
                         <h3 style="color: #333;">Calzados Mujer</h3>
                         <p style="color: #666;">Tacones y zapatos en promoción</p>
-                        <div style="margin-bottom: 10px; color: #ff6b6b; font-weight: bold; font-size: 16px;">Hasta 40% OFF</div>
+                        <div class="offer-percent">Hasta 40% OFF</div>
                         <a href="/mujer" class="btn btn-secondary">Ver Oferta</a>
                     </div>
                 </div>
@@ -590,13 +980,13 @@
                 <!-- Oferta Niños -->
                 <div class="category-card" style="position: relative;">
                     <div class="category-image" style="position: relative;">
-                        <img src="https://images.unsplash.com/photo-1525966222134-fcebf88b98f1?w=400&h=400&fit=crop" alt="Oferta Niños" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="https://images.pexels.com/photos/4112021/pexels-photo-4112021.jpeg?w=400&h=400&fit=crop" alt="Oferta Niños" style="width: 100%; height: 100%; object-fit: cover;">
                         <div style="position: absolute; top: 15px; right: 15px; background: #FFD700; color: #333; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">-30%</div>
                     </div>
                     <div class="category-info" style="background: rgba(255,255,255,0.95);">
                         <h3 style="color: #333;">Calzados Niños</h3>
                         <p style="color: #666;">Zapatos infantiles en descuento</p>
-                        <div style="margin-bottom: 10px; color: #ff6b6b; font-weight: bold; font-size: 16px;">Hasta 30% OFF</div>
+                        <div class="offer-percent">Hasta 30% OFF</div>
                         <a href="/ninos" class="btn btn-secondary">Ver Oferta</a>
                     </div>
                 </div>
@@ -604,13 +994,13 @@
                 <!-- Oferta Accesorios -->
                 <div class="category-card" style="position: relative;">
                     <div class="category-image" style="position: relative;">
-                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop" alt="Oferta Accesorios" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="https://images.pexels.com/photos/2769274/pexels-photo-2769274.jpeg?w=400&h=400&fit=crop" alt="Oferta Accesorios" style="width: 100%; height: 100%; object-fit: cover;">
                         <div style="position: absolute; top: 15px; right: 15px; background: #FFD700; color: #333; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">-25%</div>
                     </div>
                     <div class="category-info" style="background: rgba(255,255,255,0.95);">
                         <h3 style="color: #333;">Accesorios</h3>
                         <p style="color: #666;">Complementos con grandes descuentos</p>
-                        <div style="margin-bottom: 10px; color: #ff6b6b; font-weight: bold; font-size: 16px;">Hasta 25% OFF</div>
+                        <div class="offer-percent">Hasta 25% OFF</div>
                         <a href="/accesorios" class="btn btn-secondary">Ver Oferta</a>
                     </div>
                 </div>
@@ -619,58 +1009,118 @@
     </section>
 
     <!-- Productos Destacados -->
-    <section class="featured">
+    <section class="featured" id="featured">
         <div class="container">
-            <h2>Productos Destacados</h2>
+            <div class="section-header">
+                <h2>Productos Destacados</h2>
+                <p class="section-subtitle">Descubre nuestras selecciones premium</p>
+            </div>
+            <div id="products-loader" style="display:none; text-align:center; padding:40px; font-size:16px; color:#666;">
+                <i class="fas fa-spinner fa-spin"></i> Cargando productos...
+            </div>
             <div class="products-grid">
                 <div class="product-card">
-                    <div class="product-image">👞<span class="badge-discount">-20%</span></div>
+                    <div class="product-image">
+                        <img src="https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?w=400&h=400&fit=crop" alt="Zapato Casual Premium" style="width: 100%; height: 100%; object-fit: cover;">
+                        <span class="badge-discount">-20%</span>
+                        <div class="product-overlay">
+                            <button class="btn-icon"><i class="fas fa-eye"></i> Ver detalles</button>
+                        </div>
+                    </div>
                     <div class="product-info">
                         <h4 class="product-name">Zapato Casual Premium</h4>
-                        <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
-                        <div class="product-price">S/. 199.00</div>
-                        <button class="btn btn-outline"><i class="fas fa-shopping-cart"></i> Agregar</button>
+                        <p class="product-category">Zapatos Casuales</p>
+                        <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i> <span>(245)</span></div>
+                        <div class="product-prices">
+                            <span class="price-original">S/. 249.00</span>
+                            <span class="product-price">S/. 199.00</span>
+                        </div>
+                        <!-- Galería de imágenes -->
+                        <div style="display: flex; gap: 8px; margin: 12px 0; padding-top: 10px; border-top: 1px solid #eee;">
+                            <img src="https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?w=60&h=60&fit=crop" alt="Color Negro" style="width: 50px; height: 50px; border-radius: 4px; border: 2px solid #c4a27e; cursor: pointer;">
+                            <img src="https://images.pexels.com/photos/3932499/pexels-photo-3932499.jpeg?w=60&h=60&fit=crop" alt="Color Marrón" style="width: 50px; height: 50px; border-radius: 4px; border: 2px solid #ddd; cursor: pointer; opacity: 0.7;">
+                            <img src="https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg?w=60&h=60&fit=crop" alt="Color Gris" style="width: 50px; height: 50px; border-radius: 4px; border: 2px solid #ddd; cursor: pointer; opacity: 0.7;">
+                        </div>
+                        <button class="btn btn-outline"><i class="fas fa-shopping-cart"></i> Agregar al carrito</button>
                     </div>
                 </div>
 
                 <div class="product-card">
-                    <div class="product-image">🏃<span class="badge-new">Nuevo</span></div>
+                    <div class="product-image">
+                        <img src="https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg?w=400&h=400&fit=crop" alt="Zapatilla Deportiva Elite" style="width: 100%; height: 100%; object-fit: cover;">
+                        <span class="badge-new">★ Nuevo</span>
+                        <div class="product-overlay">
+                            <button class="btn-icon"><i class="fas fa-eye"></i> Ver detalles</button>
+                        </div>
+                    </div>
                     <div class="product-info">
                         <h4 class="product-name">Zapatilla Deportiva Elite</h4>
-                        <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                        <div class="product-price">S/. 249.00</div>
-                        <button class="btn btn-outline"><i class="fas fa-shopping-cart"></i> Agregar</button>
+                        <p class="product-category">Zapatillas Deportivas</p>
+                        <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i> <span>(512)</span></div>
+                        <div class="product-prices">
+                            <span class="product-price">S/. 249.00</span>
+                        </div>
+                        <!-- Galería de imágenes -->
+                        <div style="display: flex; gap: 8px; margin: 12px 0; padding-top: 10px; border-top: 1px solid #eee;">
+                            <img src="https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg?w=60&h=60&fit=crop" alt="Color Rojo" style="width: 50px; height: 50px; border-radius: 4px; border: 2px solid #c4a27e; cursor: pointer;">
+                            <img src="https://images.pexels.com/photos/3932499/pexels-photo-3932499.jpeg?w=60&h=60&fit=crop" alt="Color Azul" style="width: 50px; height: 50px; border-radius: 4px; border: 2px solid #ddd; cursor: pointer; opacity: 0.7;">
+                            <img src="https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?w=60&h=60&fit=crop" alt="Color Negro" style="width: 50px; height: 50px; border-radius: 4px; border: 2px solid #ddd; cursor: pointer; opacity: 0.7;">
+                            <img src="https://images.pexels.com/photos/1456706/pexels-photo-1456706.jpeg?w=60&h=60&fit=crop" alt="Color Gris" style="width: 50px; height: 50px; border-radius: 4px; border: 2px solid #ddd; cursor: pointer; opacity: 0.7;">
+                        </div>
+                        <button class="btn btn-outline"><i class="fas fa-shopping-cart"></i> Agregar al carrito</button>
                     </div>
                 </div>
 
                 <div class="product-card">
-                    <div class="product-image">🩴</div>
+                    <div class="product-image">
+                        <img src="https://images.pexels.com/photos/1456706/pexels-photo-1456706.jpeg?w=400&h=400&fit=crop" alt="Sandalia Cómoda Cuero" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div class="product-overlay">
+                            <button class="btn-icon"><i class="fas fa-eye"></i> Ver detalles</button>
+                        </div>
+                    </div>
                     <div class="product-info">
                         <h4 class="product-name">Sandalia Cómoda Cuero</h4>
-                        <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
-                        <div class="product-price">S/. 149.00</div>
-                        <button class="btn btn-outline"><i class="fas fa-shopping-cart"></i> Agregar</button>
+                        <p class="product-category">Sandalias</p>
+                        <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i> <span>(189)</span></div>
+                        <div class="product-prices">
+                            <span class="product-price">S/. 149.00</span>
+                        </div>
+                        <!-- Galería de imágenes -->
+                        <div style="display: flex; gap: 8px; margin: 12px 0; padding-top: 10px; border-top: 1px solid #eee;">
+                            <img src="https://images.pexels.com/photos/1456706/pexels-photo-1456706.jpeg?w=60&h=60&fit=crop" alt="Color Marrón" style="width: 50px; height: 50px; border-radius: 4px; border: 2px solid #c4a27e; cursor: pointer;">
+                            <img src="https://images.pexels.com/photos/3932499/pexels-photo-3932499.jpeg?w=60&h=60&fit=crop" alt="Color Beige" style="width: 50px; height: 50px; border-radius: 4px; border: 2px solid #ddd; cursor: pointer; opacity: 0.7;">
+                            <img src="https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg?w=60&h=60&fit=crop" alt="Color Gris" style="width: 50px; height: 50px; border-radius: 4px; border: 2px solid #ddd; cursor: pointer; opacity: 0.7;">
+                        </div>
+                        <button class="btn btn-outline"><i class="fas fa-shopping-cart"></i> Agregar al carrito</button>
                     </div>
                 </div>
 
                 <div class="product-card">
-                    <div class="product-image">🎩<span class="badge-discount">-15%</span></div>
+                    <div class="product-image">
+                        <img src="https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?w=400&h=400&fit=crop" alt="Zapato Formal Ejecutivo" style="width: 100%; height: 100%; object-fit: cover;">
+                        <span class="badge-discount">-15%</span>
+                        <div class="product-overlay">
+                            <button class="btn-icon"><i class="fas fa-eye"></i> Ver detalles</button>
+                        </div>
+                    </div>
                     <div class="product-info">
                         <h4 class="product-name">Zapato Formal Ejecutivo</h4>
-                        <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                        <div class="product-price">S/. 299.00</div>
-                        <button class="btn btn-outline"><i class="fas fa-shopping-cart"></i> Agregar</button>
+                        <p class="product-category">Zapatos Formales</p>
+                        <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i> <span>(178)</span></div>
+                        <div class="product-prices">
+                            <span class="price-original">S/. 349.00</span>
+                            <span class="product-price">S/. 299.00</span>
+                        </div>
+                        <!-- Galería de imágenes -->
+                        <div style="display: flex; gap: 8px; margin: 12px 0; padding-top: 10px; border-top: 1px solid #eee;">
+                            <img src="https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?w=60&h=60&fit=crop" alt="Color Negro" style="width: 50px; height: 50px; border-radius: 4px; border: 2px solid #c4a27e; cursor: pointer;">
+                            <img src="https://images.pexels.com/photos/3932499/pexels-photo-3932499.jpeg?w=60&h=60&fit=crop" alt="Color Marrón" style="width: 50px; height: 50px; border-radius: 4px; border: 2px solid #ddd; cursor: pointer; opacity: 0.7;">
+                            <img src="https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg?w=60&h=60&fit=crop" alt="Color Borgoña" style="width: 50px; height: 50px; border-radius: 4px; border: 2px solid #ddd; cursor: pointer; opacity: 0.7;">
+                        </div>
+                        <button class="btn btn-outline"><i class="fas fa-shopping-cart"></i> Agregar al carrito</button>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Promo Banner -->
-    <section class="promo">
-        <div class="container">
-            <h3><i class="fas fa-shipping-fast"></i> ENVÍO GRATIS</h3>
-            <p>Por compras desde S/ 149</p>
         </div>
     </section>
 
@@ -679,33 +1129,122 @@
         <div class="container">
             <div class="benefits-grid">
                 <div class="benefit-card">
-                    <i class="fas fa-truck"></i>
-                    <h3>Envío Rápido</h3>
-                    <p>Entrega en toda el Perú en 2-5 días hábiles</p>
-                </div>
-
-                <div class="benefit-card">
-                    <i class="fas fa-shield-alt"></i>
+                    <div class="benefit-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
                     <h3>Compra Segura</h3>
-                    <p>Pagos seguros con múltiples opciones</p>
+                    <p>Pagos cifrados y seguros con múltiples opciones de pago disponibles</p>
                 </div>
 
                 <div class="benefit-card">
-                    <i class="fas fa-undo"></i>
-                    <h3>Devoluciones</h3>
-                    <p>30 días para devolver si no te satisface</p>
+                    <div class="benefit-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h3>Devoluciones Fáciles</h3>
+                    <p>30 días para devolver si no te satisface, sin preguntas adicionales</p>
                 </div>
 
                 <div class="benefit-card">
-                    <i class="fas fa-headset"></i>
+                    <div class="benefit-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
                     <h3>Soporte 24/7</h3>
-                    <p>Estamos disponibles para ayudarte</p>
+                    <p>Atención personalizada disponible todos los días por chat y WhatsApp</p>
+                </div>
+            </div>
+        </div>
+    </section>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonios -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>Lo que dicen nuestros clientes</h2>
+                <p class="section-subtitle">Satisfacción garantizada en cada compra</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Excelente calidad y muy rápido el envío. Los zapatos vinieron en perfectas condiciones y se adaptan perfectamente. Recomiendo FootStyle sin dudarlo."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h4>María García</h4>
+                            <p>Lima, Perú</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Variedad increíble y precios competitivos. El proceso de compra fue muy fácil y el chat de soporte fue muy atento a mis dudas. Volveré a comprar."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h4>Carlos Rodríguez</h4>
+                            <p>Arequipa, Perú</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Llevaba buscando estos zapatos formales por toda la ciudad. FootStyle tenía el diseño exacto que quería. Servicio impecable de principio a fin."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h4>Patricia Flores</h4>
+                            <p>Cusco, Perú</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- Newsletter -->
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-content">
+                <div class="newsletter-text">
+                    <h2>Suscríbete a nuestro Newsletter</h2>
+                    <p>Recibe ofertas exclusivas, nuevos diseños y consejos de estilo directamente en tu correo</p>
+                </div>
+                <form class="newsletter-form" id="newsletterForm">
+                    <input type="email" placeholder="Tu correo electrónico" required>
+                    <button type="submit" class="btn btn-secondary"><i class="fas fa-paper-plane"></i> Suscribirse</button>
+                </form>
+                <div id="newsletter-message" style="text-align: center; margin-top: 15px; display: none; font-size: 14px;"></div>
+            </div>
+        </div>
+    </section>
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
@@ -790,5 +1329,123 @@
     <script src="/js/script.js"></script>
     <script src="/js/auth-integration.js"></script>
     <script src="/js/modal.js"></script>
+    <script src="/js/product-integration.js"></script>
+    <script>
+        (function () {
+            const slider = document.getElementById('hero-slider');
+            if (!slider) return;
+
+            const slides = Array.from(slider.querySelectorAll('.hero-slide'));
+            const dots = Array.from(slider.querySelectorAll('.hero-dot'));
+            const prevBtn = slider.querySelector('.hero-control.prev');
+            const nextBtn = slider.querySelector('.hero-control.next');
+            const supportsReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            let index = 0;
+            let autoplayId;
+            let touchStartX = 0;
+
+            if (slides.length === 0) return;
+
+            function setSlide(newIndex) {
+                index = (newIndex + slides.length) % slides.length;
+                slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+                dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+            }
+
+            function startAutoplay() {
+                if (supportsReducedMotion || slides.length <= 1) return;
+                stopAutoplay();
+                autoplayId = window.setInterval(() => setSlide(index + 1), 5500);
+            }
+
+            function stopAutoplay() {
+                if (autoplayId) {
+                    window.clearInterval(autoplayId);
+                    autoplayId = null;
+                }
+            }
+
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    setSlide(index - 1);
+                    startAutoplay();
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    setSlide(index + 1);
+                    startAutoplay();
+                });
+            }
+
+            dots.forEach((dot, i) => {
+                dot.addEventListener('click', () => {
+                    setSlide(i);
+                    startAutoplay();
+                });
+            });
+
+            slider.addEventListener('keydown', (event) => {
+                if (event.key === 'ArrowLeft') {
+                    setSlide(index - 1);
+                    startAutoplay();
+                }
+                if (event.key === 'ArrowRight') {
+                    setSlide(index + 1);
+                    startAutoplay();
+                }
+            });
+
+            slider.addEventListener('touchstart', (event) => {
+                touchStartX = event.changedTouches[0].clientX;
+            }, { passive: true });
+
+            slider.addEventListener('touchend', (event) => {
+                const delta = event.changedTouches[0].clientX - touchStartX;
+                if (Math.abs(delta) < 40) return;
+                if (delta > 0) setSlide(index - 1);
+                if (delta < 0) setSlide(index + 1);
+                startAutoplay();
+            }, { passive: true });
+
+            slider.addEventListener('mouseenter', stopAutoplay);
+            slider.addEventListener('mouseleave', startAutoplay);
+            slider.addEventListener('focusin', stopAutoplay);
+            slider.addEventListener('focusout', startAutoplay);
+
+            setSlide(0);
+            startAutoplay();
+        })();
+
+        // Newsletter Handler
+            (function() {
+                const newsletterForm = document.getElementById('newsletterForm');
+                const newsletterMessage = document.getElementById('newsletter-message');
+            
+                if (newsletterForm) {
+                    newsletterForm.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        const email = newsletterForm.querySelector('input[type="email"]').value;
+                    
+                        try {
+                            // Aquí se integrará con el backend
+                            newsletterMessage.style.display = 'block';
+                            newsletterMessage.style.color = 'var(--secondary)';
+                            newsletterMessage.textContent = '✓ ¡Suscripción exitosa! Revisa tu correo.';
+                            newsletterForm.reset();
+                        
+                            setTimeout(() => {
+                                newsletterMessage.style.display = 'none';
+                            }, 4000);
+                        } catch (error) {
+                            newsletterMessage.style.display = 'block';
+                            newsletterMessage.style.color = '#ff6b6b';
+                            newsletterMessage.textContent = 'Error al suscribirse. Intenta nuevamente.';
+                        }
+                    });
+                }
+            })();
+    </script>
 </body>
 </html>

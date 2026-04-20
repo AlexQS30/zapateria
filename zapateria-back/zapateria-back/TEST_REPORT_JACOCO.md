@@ -1,342 +1,151 @@
-# 📊 Reporte de Tests Unitarios y Cobertura JaCoCo
-**Zapatería Backend - Servicios REST**
+# Reporte de Tests y Swagger
 
----
+## Resumen
 
-## 📋 Resumen Ejecutivo
+- Proyecto: zapateria-back
+- Fecha de ejecucion: 2026-04-20
+- Java: 21
+- Spring Boot: 4.0.5
+- Ejecucion usada: mvnw.cmd clean test jacoco:report
 
-Este reporte documenta las **20 pruebas unitarias** creadas para validar la funcionalidad de autenticación y registro en el Backend del proyecto Zapatería. Se utilizó **JaCoCo (Java Code Coverage)** para medir la cobertura de código.
+## Resultado global de pruebas
 
-**Fecha:** 19 de Abril de 2026
-**Proyecto:** zapateria-back (Spring Boot 4.0.5)
-**Versión Java:** 21
+- Total de pruebas: 38
+- Exitosas: 38
+- Fallidas: 0
+- Con error: 0
+- Omitidas: 0
+- Tasa de exito: 100%
 
----
+Fuente:
+- target/surefire-reports/TEST-*.xml
 
-## 🧪 Tests Unitarios Creados
+## Cantidad de pruebas por suite
 
-### **1. LoginServiceTest.java** (10 Tests)
-Archivo: `src/test/java/com/back/zapateria/service/LoginServiceTest.java`
+| Suite | Cantidad | Estado |
+|---|---:|---|
+| com.back.zapateria.service.LoginServiceTest | 11 | PASS |
+| com.back.zapateria.service.CategoryServiceTest | 5 | PASS |
+| com.back.zapateria.service.CartServiceTest | 2 | PASS |
+| com.back.zapateria.service.PurchaseServiceTest | 2 | PASS |
+| com.back.zapateria.service.ReviewServiceTest | 3 | PASS |
+| com.back.zapateria.service.ShoeServiceTest | 7 | PASS |
+| com.back.zapateria.controller.ShoeControllerTest | 7 | PASS |
+| com.back.zapateria.ZapateriaBackApplicationTests | 1 | PASS |
 
-#### Casos de Prueba:
+## Casos de prueba de servicios (30)
 
-| ID | Test Name | Descripción | Resultado |
-|---|---|---|---|
-| 1 | `testAuthenticateSuccess` | Login exitoso con credenciales válidas | ✅ PASS |
-| 2 | `testAuthenticateUserNotFound` | Login fallido - usuario no existe | ✅ PASS |
-| 3 | `testAuthenticateWrongPassword` | Login fallido - contraseña incorrecta | ✅ PASS |
-| 4 | `testRegisterSuccess` | Registro exitoso de nuevo usuario | ✅ PASS |
-| 5 | `testRegisterEmailExists` | Registro fallido - email ya existe | ✅ PASS |
-| 6 | `testAuthenticateAdminUser` | Autenticación de usuario ADMIN | ✅ PASS |
-| 7 | `testCheckEmailExists` | Verificar si email existe | ✅ PASS |
-| 8 | `testCheckEmailNotExists` | Verificar si email no existe | ✅ PASS |
-| 9 | `testLoginResponseData` | Validar datos en LoginResponse | ✅ PASS |
-| 10 | `testPasswordEncryption` | Validar encriptación de contraseña | ✅ PASS |
+### LoginServiceTest (11)
 
-**Ubicación del Código:**
-```java
-// Ejemplo de test
-@Test
-@DisplayName("Debe autenticar usuario con credenciales válidas")
-void testAuthenticateSuccess() {
-    // Arrange: Preparar datos
-    when(userRepository.findByEmail("test@example.com"))
-            .thenReturn(Optional.of(testUser));
-    when(passwordEncoder.matches(testPassword, hashedPassword))
-            .thenReturn(true);
+Archivo: src/test/java/com/back/zapateria/service/LoginServiceTest.java
 
-    // Act: Ejecutar
-    LoginResponse response = loginService.authenticate(
-        "test@example.com", 
-        testPassword
-    );
+1. authenticate_success: autentica un usuario activo con credenciales validas.
+2. authenticate_userNotFound: rechaza login cuando el email no existe.
+3. authenticate_wrongPassword: rechaza login por password incorrecto.
+4. authenticate_inactiveUser: bloquea login de usuario inactivo.
+5. register_success: registra usuario nuevo con datos completos.
+6. register_emailAlreadyExists: evita registro con email duplicado.
+7. getAllUsers_returnsOnlyActiveUsers: lista solo usuarios activos.
+8. updateUser_changesFields: actualiza datos principales del usuario.
+9. deleteUser_marksInactive: aplica borrado logico (inactivo).
+10. emailExists_returnsTrueForExistingEmail: confirma email existente.
+11. emailExists_returnsFalseForMissingEmail: confirma email no existente.
 
-    // Assert: Validar
-    assertTrue(response.isSuccess());
-    assertEquals("Login exitoso", response.getMessage());
-}
-```
+### CategoryServiceTest (5)
 
----
+Archivo: src/test/java/com/back/zapateria/service/CategoryServiceTest.java
 
-### **2. LoginControllerTest.java** (10 Tests)
-Archivo: `src/test/java/com/back/zapateria/controller/LoginControllerTest.java`
+1. getAll_returnsList: devuelve categorias del repositorio.
+2. getByName_findsCategoryIgnoringCase: busca por nombre sin importar mayusculas.
+3. getOrCreateByName_returnsExistingCategory: reutiliza categoria existente.
+4. getOrCreateByName_createsNewCategory: crea categoria cuando no existe.
+5. delete_removesCategory: elimina categoria por id.
 
-#### Casos de Prueba:
+### CartServiceTest (2)
 
-| ID | Test Name | Descripción | Resultado |
-|---|---|---|---|
-| 1 | `testLoginEndpointSuccess` | POST /api/auth/login - Login exitoso (HTTP 200) | ✅ PASS |
-| 2 | `testLoginEndpointUserNotFound` | POST /api/auth/login - Usuario no existe (HTTP 401) | ✅ PASS |
-| 3 | `testLoginEndpointEmptyEmail` | POST /api/auth/login - Email vacío (HTTP 400) | ✅ PASS |
-| 4 | `testRegisterEndpointSuccess` | POST /api/auth/register - Registro exitoso (HTTP 201) | ✅ PASS |
-| 5 | `testRegisterEndpointEmailExists` | POST /api/auth/register - Email existe (HTTP 400) | ✅ PASS |
-| 6 | `testCheckEmailExists` | GET /api/auth/check-email/{email} - Email existe (true) | ✅ PASS |
-| 7 | `testCheckEmailNotExists` | GET /api/auth/check-email/{email} - Email no existe (false) | ✅ PASS |
-| 8 | `testLoginWithAdminRole` | Login con rol ADMIN | ✅ PASS |
-| 9 | `testLoginResponseStructure` | Validar estructura JSON de respuesta | ✅ PASS |
-| 10 | `testHandleException` | Manejo de excepciones (HTTP 500) | ✅ PASS |
+Archivo: src/test/java/com/back/zapateria/service/CartServiceTest.java
 
-**Ubicación del Código:**
-```java
-// Ejemplo de test
-@Test
-@DisplayName("Debe retornar 200 OK en login exitoso")
-void testLoginEndpointSuccess() throws Exception {
-    // Arrange
-    when(loginService.authenticate("test@example.com", "password123"))
-            .thenReturn(successResponse);
+1. add_get_clear_cart_behaviour: agrega, consulta, quita y limpia carrito.
+2. addToCart_accumulatesQuantityForSameProduct: acumula cantidad del mismo producto.
 
-    // Act & Assert
-    mockMvc.perform(post("/api/auth/login")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(loginRequest)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.success").value(true))
-            .andExpect(jsonPath("$.role").value("USER"));
-}
-```
+### PurchaseServiceTest (2)
 
----
+Archivo: src/test/java/com/back/zapateria/service/PurchaseServiceTest.java
 
-## 🎯 Cobertura de Código (JaCoCo)
+1. createPurchase_persists_whenReposPresent: crea compra con items validados en repositorio.
+2. listByUser_returnsRepositoryResults: lista compras por usuario.
 
-### Configuración JaCoCo en pom.xml:
-```xml
-<plugin>
-    <groupId>org.jacoco</groupId>
-    <artifactId>jacoco-maven-plugin</artifactId>
-    <version>0.8.10</version>
-    <executions>
-        <execution>
-            <goals>
-                <goal>prepare-agent</goal>
-            </goals>
-        </execution>
-        <execution>
-            <id>report</id>
-            <phase>test</phase>
-            <goals>
-                <goal>report</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
-```
+### ReviewServiceTest (3)
 
-### Resultados de Cobertura:
+Archivo: src/test/java/com/back/zapateria/service/ReviewServiceTest.java
 
-**Ubicación del Reporte:** `target/site/jacoco/index.html`
+1. createReview_requiresPurchase: permite reseña solo si hubo compra previa.
+2. listByProduct_returnsRepositoryReviews: lista reseñas por producto.
+3. createReview_throwsWhenUserDidNotPurchase: lanza error si no hay compra previa.
 
-#### Cobertura por Componente:
+### ShoeServiceTest (7)
 
-| Componente | Líneas | Cobertura | Estado |
-|---|---|---|---|
-| **com.back.zapateria.service.LoginService** | 150 | 92% | 🟢 EXCELENTE |
-| **com.back.zapateria.controller.LoginController** | 80 | 95% | 🟢 EXCELENTE |
-| **com.back.zapateria.dto.LoginResponse** | 45 | 100% | 🟢 PERFECTO |
-| **com.back.zapateria.model.User** | 120 | 85% | 🟢 BUENO |
-| **TOTAL BACKEND** | 395 | **88%** | 🟢 EXCELENTE |
+Archivo: src/test/java/com/back/zapateria/service/ShoeServiceTest.java
 
----
+1. getAllProducts_notEmpty: lista productos disponibles.
+2. createProduct_assignsId: crea producto y asigna id.
+3. updateProduct_changesFields: actualiza campos de producto.
+4. deleteProduct_removes: elimina producto existente.
+5. searchByName_finds: busca por nombre.
+6. getProductsByCategoryId_filtersByCategoryId: filtra productos por categoryId.
+7. getProductsByCategoryId_returnsEmptyWhenNoMatch: responde vacio cuando no hay coincidencia.
 
-## 📊 Estadísticas de Tests
+## Cobertura JaCoCo
 
-### Resumen de Ejecución:
+Fuente:
+- target/site/jacoco/jacoco.csv
+- target/site/jacoco/index.html
 
-```
-┌─────────────────────────────────────┐
-│   TOTAL DE TESTS: 20                │
-│   TESTS EXITOSOS: 20 ✅             │
-│   TESTS FALLIDOS: 0 ❌              │
-│   TASA DE ÉXITO: 100%               │
-│   TIEMPO TOTAL: ~15 segundos        │
-└─────────────────────────────────────┘
-```
+### Cobertura global
 
-### Distribución de Tests:
+- Instrucciones (total proyecto): 76.88%
+- Ramas (total proyecto): 52.56%
 
-```
-Pruebas Unitarias de Servicio:     50%  (10 tests)
-Pruebas de Integración (Controller): 50%  (10 tests)
-```
+### Cobertura del paquete de servicios
 
----
+- Instrucciones (com.back.zapateria.service): 92.53%
+- Ramas (com.back.zapateria.service): 58.00%
 
-## 🔍 Funcionalidades Probadas
+### Detalle por servicio
 
-### 1. **Autenticación (LoginService.authenticate)**
-- ✅ Login exitoso con credenciales válidas
-- ✅ Rechazo cuando usuario no existe
-- ✅ Rechazo con contraseña incorrecta
-- ✅ Validación de BCrypt password encoding
-- ✅ Retorno correcto de rol (USER/ADMIN)
+| Clase | Cobertura instrucciones | Cobertura ramas |
+|---|---:|---:|
+| CartService | 100.00% | 50.00% |
+| LoginService | 96.97% | 75.00% |
+| PurchaseService | 94.59% | 60.00% |
+| ReviewService | 93.22% | 60.00% |
+| CategoryService | 87.23% | N/A |
+| ShoeService | 80.60% | 33.33% |
 
-### 2. **Registro (LoginService.register)**
-- ✅ Registro exitoso de nuevo usuario
-- ✅ Rechazo de email duplicado
-- ✅ Encriptación de contraseña con BCrypt
-- ✅ Asignación de rol por defecto (USER)
-- ✅ Inicialización correcta de campos
+## Swagger/OpenAPI de servicios
 
-### 3. **Verificación de Email (LoginService.checkEmailExists)**
-- ✅ Retorna true si email existe
-- ✅ Retorna false si email no existe
+Se agrego documentacion OpenAPI con Springdoc y anotaciones por controlador.
 
-### 4. **Endpoints REST**
-- ✅ POST /api/auth/login - Retorna HTTP 200 en éxito
-- ✅ POST /api/auth/register - Retorna HTTP 201 en éxito
-- ✅ GET /api/auth/check-email/{email} - Retorna boolean
-- ✅ Validación de campos obligatorios
-- ✅ Manejo de excepciones
+Cambios principales:
+- Dependencia springdoc-openapi-starter-webmvc-ui en pom.xml
+- Configuracion de metadata en src/main/java/com/back/zapateria/config/OpenApiConfig.java
+- Permisos de seguridad para Swagger en src/main/java/com/back/zapateria/config/SecurityConfig.java
+- Tags y operaciones documentadas en controladores de autenticacion, productos, categorias, carrito, compras y reseñas
 
-### 5. **Respuestas JSON**
-- ✅ Estructura correcta (id, email, firstName, lastName, role, message, success)
-- ✅ Códigos HTTP apropiados
-- ✅ Mensajes de error descriptivos
-- ✅ Inclusión de campo "role" en todas las respuestas
+### URLs
 
----
+- Swagger UI: http://localhost:8081/swagger-ui/index.html
+- OpenAPI JSON: http://localhost:8081/v3/api-docs
 
-## 🛠️ Herramientas Utilizadas
+## Como ejecutar
 
-### Testing Framework:
-- **JUnit 5** - Framework de testing
-- **Mockito** - Framework de mocking
-- **Spring Test** - Spring Boot testing support
-- **MockMvc** - Testing de controladores
-
-### Coverage:
-- **JaCoCo 0.8.10** - Medición de cobertura de código
-- **Reporte HTML** - Visualización en navegador
-
-### Dependencias Agregadas:
-
-```xml
-<!-- Mockito -->
-<dependency>
-    <groupId>org.mockito</groupId>
-    <artifactId>mockito-core</artifactId>
-    <scope>test</scope>
-</dependency>
-<dependency>
-    <groupId>org.mockito</groupId>
-    <artifactId>mockito-junit-jupiter</artifactId>
-    <scope>test</scope>
-</dependency>
-
-<!-- JaCoCo -->
-<plugin>
-    <groupId>org.jacoco</groupId>
-    <artifactId>jacoco-maven-plugin</artifactId>
-    <version>0.8.10</version>
-</plugin>
-```
-
----
-
-## 🚀 Cómo Ejecutar los Tests
-
-### Opción 1: Ejecutar todos los tests
 ```bash
-cd zapateria-back
-mvn test
+cd zapateria-back/zapateria-back
+mvnw.cmd clean test jacoco:report
 ```
 
-### Opción 2: Ejecutar tests con reporte JaCoCo
-```bash
-mvn clean test jacoco:report
-```
+Abrir reporte HTML de cobertura:
 
-### Opción 3: Ejecutar un test específico
-```bash
-mvn test -Dtest=LoginServiceTest
-mvn test -Dtest=LoginControllerTest
-```
-
-### Ver Reporte JaCoCo
-Después de ejecutar `mvn clean test jacoco:report`, abre el reporte en:
-```
+```text
 target/site/jacoco/index.html
 ```
-
----
-
-## 📈 Patrones de Testing Utilizados
-
-### 1. **Arrange-Act-Assert (AAA)**
-```java
-// Arrange: Preparar datos
-when(userRepository.findByEmail("test@example.com"))
-    .thenReturn(Optional.of(testUser));
-
-// Act: Ejecutar la acción
-LoginResponse response = loginService.authenticate(...);
-
-// Assert: Validar resultados
-assertTrue(response.isSuccess());
-```
-
-### 2. **Mocking con Mockito**
-```java
-@Mock
-private UserRepository userRepository;
-
-@InjectMocks
-private LoginService loginService;
-
-// Configurar comportamiento del mock
-when(userRepository.findByEmail(anyString()))
-    .thenReturn(Optional.of(testUser));
-
-// Verificar que fue llamado
-verify(userRepository, times(1)).findByEmail("test@example.com");
-```
-
-### 3. **Testing de Controladores con MockMvc**
-```java
-mockMvc.perform(post("/api/auth/login")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(loginRequest)))
-    .andExpect(status().isOk())
-    .andExpect(jsonPath("$.success").value(true));
-```
-
----
-
-## 📝 Conclusiones
-
-### ✅ Fortalezas:
-- **100% de tests exitosos** - Todos los casos de prueba pasan
-- **88% de cobertura de código** - Excelente cobertura global
-- **Pruebas exhaustivas** - Se cubren casos de éxito y error
-- **Tests bien documentados** - Cada test tiene descripción clara con `@DisplayName`
-- **Validación integral** - Se prueban servicios, controladores y DTOs
-
-### 🔧 Recomendaciones:
-1. Mantener cobertura por encima del 80%
-2. Agregar tests de integración con base de datos
-3. Implementar tests de carga/rendimiento
-4. Agregar tests para nuevos endpoints
-5. Documentar casos de uso en comentarios de tests
-
-### 🎯 Próximos Pasos:
-1. Crear tests para ShoeService (servicios de productos)
-2. Agregar tests de seguridad (Spring Security)
-3. Implementar tests de validación de datos
-4. Crear tests de integración con PostgreSQL
-5. Configurar CI/CD para ejecutar tests automáticamente
-
----
-
-## 📞 Información de Contacto
-
-**Proyecto:** Zapatería E-Commerce
-**Módulo:** Autenticación y Autorización
-**Versión:** 1.0.0
-**Fecha:** 19 Abril 2026
-
----
-
-**Generado por:** GitHub Copilot
-**Reporte JaCoCo:** `target/site/jacoco/index.html`
