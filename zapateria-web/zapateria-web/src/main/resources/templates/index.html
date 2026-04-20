@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FootStyle - Zapatos y Accesorios</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        :root { --primary: #1a1a1a; --secondary: #d4a574; --accent: #ff6b6b; --light: #f9f9f9; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; color: #333; background: white; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+
+        /* Top Bar */
+        .top-bar {
+            background: var(--primary);
+            color: white;
+            padding: 12px 0;
+            font-size: 0.9rem;
+        }
+        .top-bar .container {
+            display: flex;
+            justify-content: space-between;
+            gap: 25px;
+        }
+        .top-bar-left, .top-bar-right {
+            display: flex;
+            gap: 25px;
+        }
+        .top-bar-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: white;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 30px;
+        }
+        .navbar-brand h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+        .navbar-search {
+            flex: 1;
+            max-width: 450px;
+            display: flex;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+        }
+        .navbar-search input {
+            flex: 1;
+            border: none;
+            padding: 12px 20px;
+            outline: none;
+            border-radius: 25px 0 0 25px;
+        }
+        .navbar-search button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            cursor: pointer;
+            border-radius: 0 25px 25px 0;
+        }
+        .navbar-actions {
+            display: flex;
+            gap: 30px;
+        }
+        .action-item {
+            font-size: 22px;
+            cursor: pointer;
+            color: var(--primary);
+            position: relative;
+        }
+        .action-item .badge {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        /* Menu */
+        .menu-bar { background: var(--primary); }
+        .menu {
+            display: flex;
+            list-style: none;
+            justify-content: center;
+            gap: 0;
+        }
+        .menu li { flex: 1; }
+        .menu li a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 12px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .menu li a:hover {
+            background: var(--secondary);
+            color: var(--primary);
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 120px 20px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 52px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+        .hero p {
+            font-size: 22px;
+            margin-bottom: 40px;
+            opacity: 0.95;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 14px 35px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--secondary);
+            color: var(--primary);
+        }
+        .btn-secondary {
+            background: var(--secondary);
+            color: var(--primary);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Categorías */
+        .categories {
+            padding: 80px 20px;
+        }
+        .categories h2 {
+            text-align: center;
+            font-size: 38px;
+            margin-bottom: 60px;
+            font-weight: 700;
+        }
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 35px;
+        }
+        .category-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+        .category-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+        .category-image {
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+        }
+        .category-info {
+            padding: 25px;
+            text-align: center;
+        }
+        .category-info h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .category-info p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        /* Productos */
+        .featured {
+            padding: 80px 20px;
+            background: var(--light);
+        }
+        .featured h2 {
+            text-align: center;
+            font-size: 38px;
+            margin-bottom: 60px;
+            font-weight: 700;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 30px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+        .product-card:hover {
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
+        }
+        .product-image {
+            position: relative;
+            height: 270px;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: #999;
+        }
+        .badge-discount {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--accent);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .badge-new {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #28a745;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .product-info {
+            padding: 20px;
+        }
+        .product-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .rating {
+            color: #ffc107;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+        .product-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+        .product-card .btn {
+            width: 100%;
+            font-size: 13px;
+        }
+
+        /* Promo */
+        .promo {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin: 60px 0;
+        }
+        .promo h3 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        /* Beneficios */
+        .benefits {
+            padding: 80px 20px;
+        }
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 30px;
+        }
+        .benefit-card {
+            text-align: center;
+            padding: 35px;
+            background: var(--light);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        .benefit-card:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .benefit-card i {
+            font-size: 48px;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+        .benefit-card:hover i {
+            color: white;
+        }
+        .benefit-card h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary);
+            color: white;
+            padding: 60px 20px 20px;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .footer-section h4 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .footer-section p, .footer-section a {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .footer-section a:hover {
+            color: var(--secondary);
+        }
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 25px;
+            font-size: 14px;
+        }
+
+        /* WhatsApp */
+        .whatsapp {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            background: #25d366;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 999;
+        }
+        .whatsapp:hover {
+            background: #1ead4f;
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .navbar .container { flex-wrap: wrap; gap: 15px; }
+            .navbar-search { max-width: 100%; flex-basis: 100%; }
+            .hero h1 { font-size: 36px; }
+            .products-grid { grid-template-columns: repeat(2, 1fr); }
+            .menu li a { font-size: 10px; padding: 12px 8px; }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-brand h1 { font-size: 24px; }
+            .hero { padding: 60px 20px; }
+            .products-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Modal Styles */
+    </style>
+</head>
+<body>
+    <!-- Header Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <span class="top-bar-item"><i class="fas fa-phone"></i> +51 949 259 138</span>
+                <span class="top-bar-item"><i class="fas fa-envelope"></i> info@footstyle.com</span>
+            </div>
+            <div class="top-bar-right">
+                <a href="#" class="top-bar-item"><i class="fas fa-question-circle"></i> Ayuda</a>
+                <a href="javascript:void(0)" onclick="openLoginModal()" class="top-bar-item" th:if="${session.usuario == null}"><i class="fas fa-sign-in-alt"></i> Ingresar</a>
+                <a href="#" class="top-bar-item" th:if="${session.usuario != null}"><i class="fas fa-user"></i> <span th:text="${session.usuario}"></span></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <h1><i class="fas fa-shoe-prints"></i> FootStyle</h1>
+            </div>
+
+            <div class="navbar-search">
+                <input type="text" placeholder="Buscar zapatos, accesorios...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+
+            <div class="navbar-actions">
+                <div class="action-item">
+                    <i class="fas fa-heart"></i>
+                    <span class="badge">0</span>
+                </div>
+                <div class="action-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-bar">
+            <div class="container">
+                <ul class="menu">
+                    <li><a href="/hombre">HOMBRE</a></li>
+                    <li><a href="/mujer">MUJER</a></li>
+                    <li><a href="/ninos">NIÑOS</a></li>
+                    <li><a href="/accesorios">ACCESORIOS</a></li>
+                    <li><a href="#ofertas">OFERTAS</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1>BIENVENIDO A FOOTSTYLE</h1>
+        <p>Los Mejores Zapatos y Accesorios para tu Estilo</p>
+        <a href="#categorias" class="btn btn-primary"><i class="fas fa-arrow-down"></i> Explorar Ahora</a>
+    </section>
+
+    <!-- Categorías -->
+    <section class="categories" id="categorias">
+        <div class="container">
+            <h2>Encuentra tu Estilo</h2>
+            <div id="categories-loader" style="display:none; text-align:center; padding:20px;">Cargando categorías...</div>
+            <div id="categories-empty" style="display:none; text-align:center; padding:20px; color:#666;"></div>
+            <div class="categories-grid">
+                <div class="category-card">
+                    <div class="category-image">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop" alt="Calzados Hombre" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="category-info">
+                        <h3>Calzados Hombre</h3>
+                        <p>Zapatos elegantes y cómodos</p>
+                        <a href="/hombre" class="btn btn-secondary">Ver Colección</a>
+                    </div>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-image">
+                        <img src="https://images.unsplash.com/photo-1546261150-ce1b0db87a6f?w=400&h=400&fit=crop" alt="Calzados Mujer" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="category-info">
+                        <h3>Calzados Mujer</h3>
+                        <p>Estilo y comodidad en cada paso</p>
+                        <a href="/mujer" class="btn btn-secondary">Ver Colección</a>
+                    </div>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-image">
+                        <img src="https://images.unsplash.com/photo-1525966222134-fcebf88b98f1?w=400&h=400&fit=crop" alt="Calzados Niños" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="category-info">
+                        <h3>Calzados Niños</h3>
+                        <p>Zapatos seguros y divertidos</p>
+                        <a href="/ninos" class="btn btn-secondary">Ver Colección</a>
+                    </div>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-image">
+                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop" alt="Accesorios" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="category-info">
+                        <h3>Accesorios</h3>
+                        <p>Complementos para tu estilo</p>
+                        <a href="/accesorios" class="btn btn-secondary">Ver Colección</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ofertas Especiales -->
+    <section class="ofertas" id="ofertas" style="padding: 80px 20px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);">
+        <div class="container">
+            <h2 style="text-align: center; font-size: 38px; margin-bottom: 20px; font-weight: 700; color: white;">🔥 OFERTAS ESPECIALES</h2>
+            <p style="text-align: center; font-size: 18px; color: rgba(255,255,255,0.9); margin-bottom: 60px;">Descuentos increíbles en nuestras categorías</p>
+            
+            <div class="categories-grid">
+                <!-- Oferta Hombre -->
+                <div class="category-card" style="position: relative;">
+                    <div class="category-image" style="position: relative;">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop" alt="Oferta Hombre" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div style="position: absolute; top: 15px; right: 15px; background: #FFD700; color: #333; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">-35%</div>
+                    </div>
+                    <div class="category-info" style="background: rgba(255,255,255,0.95);">
+                        <h3 style="color: #333;">Calzados Hombre</h3>
+                        <p style="color: #666;">Zapatos elegantes en oferta</p>
+                        <div style="margin-bottom: 10px; color: #ff6b6b; font-weight: bold; font-size: 16px;">Hasta 35% OFF</div>
+                        <a href="/hombre" class="btn btn-secondary">Ver Oferta</a>
+                    </div>
+                </div>
+
+                <!-- Oferta Mujer -->
+                <div class="category-card" style="position: relative;">
+                    <div class="category-image" style="position: relative;">
+                        <img src="https://images.unsplash.com/photo-1546261150-ce1b0db87a6f?w=400&h=400&fit=crop" alt="Oferta Mujer" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div style="position: absolute; top: 15px; right: 15px; background: #FFD700; color: #333; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">-40%</div>
+                    </div>
+                    <div class="category-info" style="background: rgba(255,255,255,0.95);">
+                        <h3 style="color: #333;">Calzados Mujer</h3>
+                        <p style="color: #666;">Tacones y zapatos en promoción</p>
+                        <div style="margin-bottom: 10px; color: #ff6b6b; font-weight: bold; font-size: 16px;">Hasta 40% OFF</div>
+                        <a href="/mujer" class="btn btn-secondary">Ver Oferta</a>
+                    </div>
+                </div>
+
+                <!-- Oferta Niños -->
+                <div class="category-card" style="position: relative;">
+                    <div class="category-image" style="position: relative;">
+                        <img src="https://images.unsplash.com/photo-1525966222134-fcebf88b98f1?w=400&h=400&fit=crop" alt="Oferta Niños" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div style="position: absolute; top: 15px; right: 15px; background: #FFD700; color: #333; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">-30%</div>
+                    </div>
+                    <div class="category-info" style="background: rgba(255,255,255,0.95);">
+                        <h3 style="color: #333;">Calzados Niños</h3>
+                        <p style="color: #666;">Zapatos infantiles en descuento</p>
+                        <div style="margin-bottom: 10px; color: #ff6b6b; font-weight: bold; font-size: 16px;">Hasta 30% OFF</div>
+                        <a href="/ninos" class="btn btn-secondary">Ver Oferta</a>
+                    </div>
+                </div>
+
+                <!-- Oferta Accesorios -->
+                <div class="category-card" style="position: relative;">
+                    <div class="category-image" style="position: relative;">
+                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop" alt="Oferta Accesorios" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div style="position: absolute; top: 15px; right: 15px; background: #FFD700; color: #333; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">-25%</div>
+                    </div>
+                    <div class="category-info" style="background: rgba(255,255,255,0.95);">
+                        <h3 style="color: #333;">Accesorios</h3>
+                        <p style="color: #666;">Complementos con grandes descuentos</p>
+                        <div style="margin-bottom: 10px; color: #ff6b6b; font-weight: bold; font-size: 16px;">Hasta 25% OFF</div>
+                        <a href="/accesorios" class="btn btn-secondary">Ver Oferta</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Productos Destacados -->
+    <section class="featured">
+        <div class="container">
+            <h2>Productos Destacados</h2>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image">👞<span class="badge-discount">-20%</span></div>
+                    <div class="product-info">
+                        <h4 class="product-name">Zapato Casual Premium</h4>
+                        <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                        <div class="product-price">S/. 199.00</div>
+                        <button class="btn btn-outline"><i class="fas fa-shopping-cart"></i> Agregar</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-image">🏃<span class="badge-new">Nuevo</span></div>
+                    <div class="product-info">
+                        <h4 class="product-name">Zapatilla Deportiva Elite</h4>
+                        <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <div class="product-price">S/. 249.00</div>
+                        <button class="btn btn-outline"><i class="fas fa-shopping-cart"></i> Agregar</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-image">🩴</div>
+                    <div class="product-info">
+                        <h4 class="product-name">Sandalia Cómoda Cuero</h4>
+                        <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+                        <div class="product-price">S/. 149.00</div>
+                        <button class="btn btn-outline"><i class="fas fa-shopping-cart"></i> Agregar</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-image">🎩<span class="badge-discount">-15%</span></div>
+                    <div class="product-info">
+                        <h4 class="product-name">Zapato Formal Ejecutivo</h4>
+                        <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <div class="product-price">S/. 299.00</div>
+                        <button class="btn btn-outline"><i class="fas fa-shopping-cart"></i> Agregar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Promo Banner -->
+    <section class="promo">
+        <div class="container">
+            <h3><i class="fas fa-shipping-fast"></i> ENVÍO GRATIS</h3>
+            <p>Por compras desde S/ 149</p>
+        </div>
+    </section>
+
+    <!-- Beneficios -->
+    <section class="benefits">
+        <div class="container">
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <i class="fas fa-truck"></i>
+                    <h3>Envío Rápido</h3>
+                    <p>Entrega en toda el Perú en 2-5 días hábiles</p>
+                </div>
+
+                <div class="benefit-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Compra Segura</h3>
+                    <p>Pagos seguros con múltiples opciones</p>
+                </div>
+
+                <div class="benefit-card">
+                    <i class="fas fa-undo"></i>
+                    <h3>Devoluciones</h3>
+                    <p>30 días para devolver si no te satisface</p>
+                </div>
+
+                <div class="benefit-card">
+                    <i class="fas fa-headset"></i>
+                    <h3>Soporte 24/7</h3>
+                    <p>Estamos disponibles para ayudarte</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>Sobre FootStyle</h4>
+                    <p>Somos tu destino ideal para encontrar calzado de calidad con las últimas tendencias del mercado.</p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Categorías</h4>
+                    <a href="/hombre">Calzados Hombre</a>
+                    <a href="/mujer">Calzados Mujer</a>
+                    <a href="/ninos">Calzados Niños</a>
+                    <a href="/accesorios">Accesorios</a>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Información</h4>
+                    <a href="#">Envíos</a>
+                    <a href="#">Devoluciones</a>
+                    <a href="#">Términos y Condiciones</a>
+                    <a href="#">Privacidad</a>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <p><strong>Teléfono:</strong> +51 949 259 138</p>
+                    <p><strong>Email:</strong> info@footstyle.com</p>
+                    <p><strong>Horario:</strong> Lun - Dom 9:00 AM - 9:00 PM</p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 FootStyle. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp -->
+    <a href="https://wa.me/51949259138" class="whatsapp" target="_blank" title="Contactar por WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Modal Login -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Inicia Sesión</h2>
+                <button class="modal-close" onclick="closeLoginModal()">&times;</button>
+            </div>
+            <form id="modalLoginForm" class="modal-form">
+                <div class="form-group-modal">
+                    <label for="modalEmail">Correo Electrónico</label>
+                    <input type="email" id="modalEmail" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group-modal">
+                    <label for="modalPassword">Contraseña</label>
+                    <input type="password" id="modalPassword" placeholder="••••••••" required>
+                </div>
+                <div class="form-options-modal">
+                    <label>
+                        <input type="checkbox" name="remember"> Recuérdame
+                    </label>
+                    <a href="#">¿Olvidaste tu contraseña?</a>
+                </div>
+                <button type="submit" id="modalLoginBtn" class="btn-login-modal">Inicia Sesión</button>
+            </form>
+            <div class="modal-divider">O continúa con</div>
+            <div style="display: flex; gap: 10px;">
+                <button style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; color: #666; font-size: 13px; transition: all 0.3s;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='white'">
+                    <i class="fab fa-google"></i> Google
+                </button>
+                <button style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; color: #666; font-size: 13px; transition: all 0.3s;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='white'">
+                    <i class="fab fa-facebook"></i> Facebook
+                </button>
+            </div>
+            <div class="modal-signup">
+                ¿No tienes cuenta? <a href="#">Regístrate</a>
+            </div>
+        </div>
+    </div>
+    <script src="/js/script.js"></script>
+    <script src="/js/auth-integration.js"></script>
+    <script src="/js/modal.js"></script>
+</body>
+</html>

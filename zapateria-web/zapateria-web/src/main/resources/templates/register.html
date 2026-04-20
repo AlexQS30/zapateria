@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrate - FootStyle</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html { scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .register-wrapper {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .register-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            color: white;
+            text-align: center;
+        }
+
+        .register-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .register-header p {
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        .register-body {
+            padding: 40px 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .register-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .register-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .register-body::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .form-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #667eea;
+            text-transform: uppercase;
+            margin: 20px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-section-title:first-child {
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input.is-invalid {
+            border-color: #dc3545;
+            background-color: #fff5f5;
+        }
+
+        .form-group input.is-valid {
+            border-color: #28a745;
+            background-color: #f5fff5;
+        }
+
+        .form-help {
+            color: #999;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .form-error {
+            color: #dc3545;
+            font-size: 11px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .form-error.show {
+            display: block;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-register:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .login-text {
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+
+        .login-text a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .login-text a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 4px solid #c33;
+            font-size: 13px;
+        }
+
+        .error-message.hidden {
+            display: none;
+        }
+
+        .success-message {
+            background: #efe;
+            color: #3c3;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 4px solid #3c3;
+            font-size: 13px;
+        }
+
+        .success-message.hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .register-body {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-wrapper">
+        <!-- Header -->
+        <div class="register-header">
+            <h1><i class="fas fa-user-plus"></i> Crear Cuenta</h1>
+            <p>Únete a la comunidad FootStyle</p>
+        </div>
+
+        <!-- Formulario -->
+        <div class="register-body">
+            <div id="errorMessage" class="error-message hidden">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorText"></span>
+            </div>
+
+            <form id="registerForm">
+                <!-- SECCIÓN: Credenciales -->
+                <div class="form-section-title">Credenciales</div>
+                
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> Correo Electrónico *</label>
+                    <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+                    <div class="form-error" id="emailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Contraseña *</label>
+                    <input type="password" id="password" name="password" placeholder="Mínimo 6 caracteres" required minlength="6">
+                    <div class="form-help">Usa mayúsculas, números y símbolos para mayor seguridad</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword"><i class="fas fa-lock"></i> Confirmar Contraseña *</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Repite tu contraseña" required minlength="6">
+                    <div class="form-error" id="confirmPasswordError"></div>
+                </div>
+
+                <!-- SECCIÓN: Información Personal -->
+                <div class="form-section-title">Información Personal</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName"><i class="fas fa-user"></i> Nombre *</label>
+                        <input type="text" id="firstName" name="firstName" placeholder="Juan" required>
+                        <div class="form-error" id="firstNameError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName"><i class="fas fa-user"></i> Apellido *</label>
+                        <input type="text" id="lastName" name="lastName" placeholder="Pérez" required>
+                        <div class="form-error" id="lastNameError"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phoneNumber"><i class="fas fa-phone"></i> Teléfono</label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="987654321">
+                </div>
+
+                <!-- SECCIÓN: Dirección -->
+                <div class="form-section-title">Dirección</div>
+
+                <div class="form-group">
+                    <label for="address"><i class="fas fa-map-marker-alt"></i> Dirección</label>
+                    <input type="text" id="address" name="address" placeholder="Calle Principal 123">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city"><i class="fas fa-city"></i> Ciudad</label>
+                        <input type="text" id="city" name="city" placeholder="Lima">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="postalCode"><i class="fas fa-hashtag"></i> Código Postal</label>
+                        <input type="text" id="postalCode" name="postalCode" placeholder="01001">
+                    </div>
+                </div>
+
+                <!-- Botón de Registro -->
+                <button type="submit" class="btn-register" id="registerBtn">
+                    <i class="fas fa-user-plus"></i> Crear Cuenta
+                </button>
+            </form>
+
+            <p class="login-text">
+                ¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/auth-integration.js"></script>
+    <script>
+        const registerForm = document.getElementById('registerForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const firstNameInput = document.getElementById('firstName');
+        const lastNameInput = document.getElementById('lastName');
+        const registerBtn = document.getElementById('registerBtn');
+        const errorDiv = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+
+        /**
+         * Valida email en tiempo real
+         */
+        emailInput.addEventListener('blur', async function() {
+            const emailError = document.getElementById('emailError');
+            
+            if (!this.value) {
+                emailError.classList.remove('show');
+                return;
+            }
+
+            if (!this.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                this.classList.add('is-invalid');
+                emailError.textContent = 'Email inválido';
+                emailError.classList.add('show');
+                return;
+            }
+
+            const exists = await checkEmailExists(this.value);
+            if (exists) {
+                this.classList.add('is-invalid');
+                emailError.textContent = 'Este email ya está registrado';
+                emailError.classList.add('show');
+            } else {
+                this.classList.add('is-valid');
+                emailError.classList.remove('show');
+            }
+        });
+
+        /**
+         * Valida coincidencia de contraseñas
+         */
+        confirmPasswordInput.addEventListener('input', function() {
+            const confirmPasswordError = document.getElementById('confirmPasswordError');
+            
+            if (this.value && passwordInput.value !== this.value) {
+                this.classList.add('is-invalid');
+                confirmPasswordError.textContent = 'Las contraseñas no coinciden';
+                confirmPasswordError.classList.add('show');
+            } else if (this.value && passwordInput.value === this.value) {
+                this.classList.add('is-valid');
+                confirmPasswordError.classList.remove('show');
+            }
+        });
+
+        /**
+         * Envía el formulario
+         */
+        registerForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Limpiar mensajes anteriores
+            errorDiv.classList.add('hidden');
+
+            // Validaciones
+            let isValid = true;
+            const errors = {};
+
+            if (!emailInput.value) {
+                errors.email = 'El email es requerido';
+                isValid = false;
+            }
+            if (!passwordInput.value) {
+                errors.password = 'La contraseña es requerida';
+                isValid = false;
+            }
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                errors.confirmPassword = 'Las contraseñas no coinciden';
+                isValid = false;
+            }
+            if (!firstNameInput.value) {
+                errors.firstName = 'El nombre es requerido';
+                isValid = false;
+            }
+            if (!lastNameInput.value) {
+                errors.lastName = 'El apellido es requerido';
+                isValid = false;
+            }
+
+            if (!isValid) {
+                errorText.textContent = Object.values(errors)[0];
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            // Cambiar estado del botón
+            registerBtn.textContent = 'Registrando...';
+            registerBtn.disabled = true;
+
+            try {
+                // Preparar datos del usuario
+                const userData = {
+                    email: emailInput.value,
+                    password: passwordInput.value,
+                    firstName: firstNameInput.value,
+                    lastName: lastNameInput.value,
+                    phoneNumber: document.getElementById('phoneNumber').value,
+                    address: document.getElementById('address').value,
+                    city: document.getElementById('city').value,
+                    postalCode: document.getElementById('postalCode').value
+                };
+
+                // Llamar al servicio de registro
+                const result = await registerUser(userData);
+
+                if (result.success) {
+                    alert(`¡Registro exitoso! Bienvenido ${result.user.firstName}`);
+                    // Redirigir a login
+                    window.location.href = '/login';
+                } else {
+                    errorText.textContent = result.message;
+                    errorDiv.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorText.textContent = 'Error de conexión con el servidor';
+                errorDiv.classList.remove('hidden');
+            } finally {
+                // Restaurar estado del botón
+                registerBtn.textContent = '✓ Crear Cuenta';
+                registerBtn.disabled = false;
+            }
+        });
+
+        // Limpiar errores al escribir
+        [emailInput, passwordInput, confirmPasswordInput, firstNameInput, lastNameInput].forEach(input => {
+            input.addEventListener('input', function() {
+                const errorId = this.id + 'Error';
+                const errorElement = document.getElementById(errorId);
+                if (errorElement) {
+                    errorElement.classList.remove('show');
+                }
+            });
+        });
+
+        // Redirigir si ya está autenticado
+        window.addEventListener('DOMContentLoaded', function() {
+            if (isUserLoggedIn()) {
+                window.location.href = '/';
+            }
+        });
+    </script>
+</body>
+</html>

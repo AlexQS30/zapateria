@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <header th:fragment="header">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="container">
+                <div class="top-bar-left">
+                    <span><i class="fas fa-phone"></i> +51 949 259 138</span>
+                    <span><i class="fas fa-envelope"></i> info@footstyle.com</span>
+                </div>
+                <div class="top-bar-right">
+                    <a href="/contacto"><i class="fas fa-question-circle"></i> Ayuda</a>
+                    <div class="user-menu" th:if="${session.usuario == null}">
+                        <a href="javascript:void(0)" onclick="openLoginModal()"><i class="fas fa-sign-in-alt"></i> Inicia Sesión</a>
+                    </div>
+                    <div class="user-menu" th:if="${session.usuario != null}">
+                        <div class="user-dropdown">
+                            <button class="user-btn">
+                                <i class="fas fa-user-circle"></i> <span th:text="${session.usuario}"></span>
+                            </button>
+                            <div class="dropdown-content">
+                                <a href="#"><i class="fas fa-cog"></i> Mi Perfil</a>
+                                <a href="#"><i class="fas fa-box"></i> Mis Pedidos</a>
+                                <a href="#"><i class="fas fa-heart"></i> Favoritos</a>
+                                <a href="#"><i class="fas fa-cog"></i> Configuración</a>
+                                <hr>
+                                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Header -->
+        <nav class="navbar">
+            <div class="container navbar-content">
+                <div class="navbar-brand">
+                    <a href="/">
+                        <h1>FootStyle</h1>
+                    </a>
+                </div>
+
+                <div class="navbar-search">
+                    <input type="text" placeholder="Buscar productos...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+
+                <div class="navbar-actions">
+                    <div class="action-item">
+                        <i class="fas fa-heart"></i>
+                        <span class="badge">0</span>
+                    </div>
+                    <div class="action-item cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="badge">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu Principal -->
+            <div class="menu-bar">
+                <div class="container">
+                    <ul class="menu">
+                        <li><a href="/hombre">HOMBRE</a></li>
+                        <li><a href="/mujer">MUJER</a></li>
+                        <li><a href="/ninos">NIÑOS</a></li>
+                        <li><a href="/accesorios">ACCESORIOS</a></li>
+                        <li><a href="/#ofertas">OFERTAS</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
