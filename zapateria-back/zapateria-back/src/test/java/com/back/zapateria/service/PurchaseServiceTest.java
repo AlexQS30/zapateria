@@ -40,14 +40,24 @@ class PurchaseServiceTest {
         } catch (Exception ignored) {}
     }
 
+    // Este test valida que una compra se construye con los productos encontrados en el repositorio.
     @Test
     void createPurchase_persists_whenReposPresent() {
         when(productRepository.findById("2")).thenReturn(java.util.Optional.of(new Product("2","P",1.0,"/i", (String) null, true,1,0,5.0)));
-        // We won't mock purchaseRepository.save here; the method should return a Purchase instance even if repo null
         Purchase p = purchaseService.createPurchase("u1", Map.of("2",1), 1.0);
         assertNotNull(p);
         assertEquals("u1", p.getUserId());
         assertFalse(p.getItems().isEmpty());
+    }
+
+    // Este test comprueba que listar compras por usuario devuelve lo que el repositorio reporta.
+    @Test
+    void listByUser_returnsRepositoryResults() {
+        when(purchaseRepository.findByUserId("u1")).thenReturn(java.util.List.of(new Purchase("p1", "u1", 10.0)));
+
+        var purchases = purchaseService.listByUser("u1");
+        assertEquals(1, purchases.size());
+        assertEquals("u1", purchases.get(0).getUserId());
     }
  
 }

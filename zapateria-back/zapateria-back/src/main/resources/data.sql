@@ -2,13 +2,17 @@
 INSERT INTO category (id, name) VALUES (1, 'Hombre');
 INSERT INTO category (id, name) VALUES (2, 'Mujer');
 INSERT INTO category (id, name) VALUES (3, 'Deportivos');
+INSERT INTO category (id, name) VALUES (4, 'Formales');
+INSERT INTO category (id, name) VALUES (5, 'Accesorios');
 
 -- Products (id is string)
 INSERT INTO product (id, name, price, image, category_id, stock, is_new, discount, rating) VALUES
 ('1','Zapato Casual Premium',189.00,'/img/casual.jpg',1,20,false,0,4.5),
 ('2','Tenis Deportivo Elite',259.00,'/img/deportivo.jpg',3,15,true,20,5.0),
 ('3','Zapato Formal Ejecutivo',279.00,'/img/formal.jpg',1,10,false,10,4.8),
-('4','Zapatilla Running',199.00,'/img/running.jpg',3,0,false,0,4.3);
+('4','Zapatilla Running',199.00,'/img/running.jpg',3,0,false,0,4.3),
+('5','Zapato Derby Formal',299.00,'/img/formal.jpg',4,12,false,15,4.7),
+('6','Kit de Limpieza Premium',79.00,'/img/casual.jpg',5,50,true,0,4.1);
 
 -- Users: create an admin and a regular user
 INSERT INTO users (id, email, password, first_name, last_name, phone_number, address, city, postal_code, created_at, updated_at, is_active, role)

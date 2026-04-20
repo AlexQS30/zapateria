@@ -1,16 +1,22 @@
-// Ejemplo de integración con el backend desde zapateria-web
+// Integración con el backend desde zapateria-web
 // Guarda esto en: src/main/resources/static/js/auth-integration.js
 
 const API_BASE_URL = 'http://localhost:8081/api/auth';
 
 /**
- * Realiza login del usuario
+ * Realiza login del usuario con manejo robusto de errores
  * @param {string} email - Email del usuario
  * @param {string} password - Contraseña del usuario
  * @returns {Promise} Promesa con la respuesta del servidor
  */
 window.loginUser = async function(email, password) {
     try {
+        console.log('Iniciando login para:', email);
+        
+        if (!email || !password) {
+            throw new Error('Email y contraseña son requeridos');
+        }
+
         const response = await fetch(`${API_BASE_URL}/login`, {
             method: 'POST',
             headers: {
@@ -19,12 +25,18 @@ window.loginUser = async function(email, password) {
             body: JSON.stringify({
                 email: email,
                 password: password
-            })
+            }),
+            timeout: 5000 // 5 segundos de timeout
         });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `Error HTTP: ${response.status}`);
+        }
 
         const data = await response.json();
 
-        if (response.ok && data.success) {
+        if (data.success) {
             // Guardar datos del usuario en sessionStorage (incluyendo role)
             sessionStorage.setItem('user', JSON.stringify({
                 id: data.id,
@@ -34,25 +46,115 @@ window.loginUser = async function(email, password) {
                 role: data.role
             }));
             sessionStorage.setItem('loggedIn', 'true');
+            
+            console.log('Login exitoso para:', email);
+            
             return {
                 success: true,
                 user: data,
-                message: data.message
+                message: data.message || 'Login exitoso'
             };
         } else {
-            return {
-                success: false,
-                message: data.message || 'Error en el login'
-            };
+            throw new Error(data.message || 'Error desconocido en el login');
         }
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error en loginUser:', error.message);
+        
+        // Mapear errores específicos
+        let errorMessage = 'Error de conexión con el servidor';
+        
+        if (error.message.includes('Failed to fetch')) {
+            errorMessage = 'No se puede conectar con el servidor. Verifica que esté ejecutándose en http://localhost:8081';
+        } else if (error.message.includes('timeout')) {
+            errorMessage = 'La solicitud tardó demasiado. Intenta de nuevo.';
+        } else if (error.message.includes('HTTP')) {
+            errorMessage = `Error del servidor: ${error.message}`;
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        
         return {
             success: false,
-            message: 'Error de conexión con el servidor'
+            message: errorMessage,
+            error: error.message
         };
     }
-}
+};
+
+/**
+ * Registra un nuevo usuario con manejo robusto de errores
+ * @param {Object} userData - Objeto con los datos del usuario
+ * @returns {Promise} Promesa con la respuesta del servidor
+ */
+window.registerUser = async function(userData) {
+    try {
+        console.log('Iniciando registro para:', userData.email);
+        
+        if (!userData.email || !userData.password) {
+            throw new Error('Email y contraseña son requeridos');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: userData.email,
+                password: userData.password,
+                firstName: userData.firstName || '',
+                lastName: userData.lastName || '',
+                phoneNumber: userData.phoneNumber || '',
+                address: userData.address || '',
+                city: userData.city || '',
+                postalCode: userData.postalCode || ''
+            }),
+            timeout: 5000
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `Error HTTP: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            console.log('Registro exitoso para:', userData.email);
+            
+            return {
+                success: true,
+                user: data,
+                message: data.message || 'Registro exitoso'
+            };
+        } else {
+            throw new Error(data.message || 'Error desconocido en el registro');
+        }
+    } catch (error) {
+        console.error('Error en registerUser:', error.message);
+        
+        let errorMessage = 'Error de conexión con el servidor';
+        
+        if (error.message.includes('Failed to fetch')) {
+            errorMessage = 'No se puede conectar con el servidor. Verifica que esté ejecutándose.';
+        } else if (error.message.includes('timeout')) {
+            errorMessage = 'La solicitud tardó demasiado. Intenta de nuevo.';
+        } else if (error.message.includes('HTTP')) {
+            errorMessage = `Error del servidor: ${error.message}`;
+        } else if (error.message.includes('Ya existe')) {
+            errorMessage = 'El email ya está registrado';
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        
+        return {
+            success: false,
+            message: errorMessage,
+            error: error.message
+        };
+    }
+};
+
 function registeruser() {
     const userData = {
         firstName: document.getElementById("firstName").value,
@@ -69,61 +171,13 @@ function registeruser() {
     window.registerUser(userData).then(result => {
         if (result.success) {
             alert("Usuario registrado correctamente");
-
             document.querySelector("#formUsuario form").reset();
             document.getElementById("formUsuario").style.display = "none";
-
         } else {
             alert("Error: " + result.message);
         }
     });
 }
-/**
- * Registra un nuevo usuario
- * @param {Object} userData - Objeto con los datos del usuario
- * @returns {Promise} Promesa con la respuesta del servidor
- */
-window.registerUser = async function(userData) {
-    try {
-        const response = await fetch(`${API_BASE_URL}/register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email: userData.email,
-                password: userData.password,
-                firstName: userData.firstName,
-                lastName: userData.lastName,
-                phoneNumber: userData.phoneNumber || '',
-                address: userData.address || '',
-                city: userData.city || '',
-                postalCode: userData.postalCode || ''
-            })
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.success) {
-            return {
-                success: true,
-                user: data,
-                message: data.message
-            };
-        } else {
-            return {
-                success: false,
-                message: data.message || 'Error en el registro'
-            };
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        return {
-            success: false,
-            message: 'Error de conexión con el servidor'
-        };
-    }
-};
 
 /**
  * Valida si un email ya está registrado
@@ -133,9 +187,12 @@ window.registerUser = async function(userData) {
 window.checkEmailExists = async function(email) {
     try {
         const response = await fetch(`${API_BASE_URL}/check-email/${email}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         return await response.json();
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error en checkEmailExists:', error);
         return false;
     }
 };
@@ -145,9 +202,38 @@ window.checkEmailExists = async function(email) {
  * @returns {Object|null} Datos del usuario o null si no está autenticado
  */
 window.getCurrentUser = function() {
-    const userStr = sessionStorage.getItem('user');
-    return userStr ? JSON.parse(userStr) : null;
+    try {
+        const userStr = sessionStorage.getItem('user');
+        return userStr ? JSON.parse(userStr) : null;
+    } catch (error) {
+        console.error('Error al obtener usuario actual:', error);
+        return null;
+    }
 };
+
+/**
+ * Redirige al usuario según su rol
+ */
+window.redirectByRole = function() {
+    try {
+        const user = window.getCurrentUser();
+        if (!user) {
+            window.location.href = '/login';
+            return;
+        }
+        
+        if (user.role === 'ADMIN') {
+            window.location.href = '/admin/dashboard';
+        } else {
+            window.location.href = '/';
+        }
+    } catch (error) {
+        console.error('Error en redirectByRole:', error);
+        window.location.href = '/';
+    }
+};
+
+console.log('Auth-integration.js cargado correctamente');
 
 /**
  * Verifica si el usuario está autenticado

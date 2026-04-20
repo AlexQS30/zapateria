@@ -47,6 +47,22 @@ public class HomeController {
         return "categoria";
     }
 
+    @GetMapping("/deportivos")
+    public String deportivos(Model model) {
+        model.addAttribute("titulo", "Calzados Deportivos - FootStyle");
+        model.addAttribute("categoria", "deportivos");
+        model.addAttribute("products", shoeService.getCategoryProducts("deportivos"));
+        return "categoria";
+    }
+
+    @GetMapping("/formales")
+    public String formales(Model model) {
+        model.addAttribute("titulo", "Calzados Formales - FootStyle");
+        model.addAttribute("categoria", "formales");
+        model.addAttribute("products", shoeService.getCategoryProducts("formales"));
+        return "categoria";
+    }
+
     @GetMapping("/accesorios")
     public String accesorios(Model model) {
         model.addAttribute("titulo", "Accesorios - FootStyle");
@@ -64,6 +80,8 @@ public class HomeController {
             case "mujer": return "redirect:/mujer";
             case "niños":
             case "ninos": return "redirect:/ninos";
+            case "deportivos": return "redirect:/deportivos";
+            case "formales": return "redirect:/formales";
             case "accesorios": return "redirect:/accesorios";
             default:
                 // fallback: redirect to home

@@ -2,13 +2,26 @@ package com.web.zapateria.service;
 
 import com.web.zapateria.model.Product;
 import com.web.zapateria.model.Category;
+import com.web.zapateria.client.BackendClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
 public class ShoeService {
 
+    @Autowired(required = false)
+    private BackendClient backendClient;
+
     public List<Product> getFeaturedProducts() {
+        // Intenta obtener del backend, si falla usa datos locales
+        if (backendClient != null) {
+            List<Product> offers = backendClient.getOffers();
+            if (!offers.isEmpty()) {
+                return offers;
+            }
+        }
+        
         return Arrays.asList(
             new Product("1", "Zapato Casual Premium", "Confortable para el día", 199.00,
                 "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop", "hombre", 20, false, 4.5, 245),
@@ -34,7 +47,48 @@ public class ShoeService {
         );
     }
 
+    /**
+     * Obtiene productos por categoría desde el backend
+     * Mapea nombres en español a los nombres de categoría del backend
+     */
     public List<Product> getCategoryProducts(String category) {
+        // Mapear nombres en minúscula a nombres del backend con mayúscula
+        String backendCategory = mapCategoryName(category);
+        
+        // Intenta obtener del backend, si falla usa datos locales
+        if (backendClient != null) {
+            List<Product> products = backendClient.getProductsByCategory(backendCategory);
+            if (!products.isEmpty()) {
+                return products;
+            }
+        }
+        
+        // Fallback: datos locales
+        return getLocalCategoryProducts(category);
+    }
+
+    /**
+     * Mapea nombres de categoría en minúscula a los nombres del backend
+     */
+    private String mapCategoryName(String category) {
+        if (category == null) return "Hombre";
+        
+        switch (category.toLowerCase()) {
+            case "hombre": return "Hombre";
+            case "mujer": return "Mujer";
+            case "ninos":
+            case "niños": return "Deportivos"; // En el backend tenemos Deportivos
+            case "deportivos": return "Deportivos";
+            case "formales": return "Formales";
+            case "accesorios": return "Accesorios";
+            default: return "Hombre";
+        }
+    }
+
+    /**
+     * Productos locales de fallback si el backend no está disponible
+     */
+    private List<Product> getLocalCategoryProducts(String category) {
         List<Product> products = new ArrayList<>();
         
         String[] names = {"Zapato Casual", "Tenis Deportivo", "Zapato Formal", "Zapatilla Running", 
@@ -77,6 +131,15 @@ public class ShoeService {
     }
 
     public Product getProductDetail(String id) {
+        // Intenta obtener del backend
+        if (backendClient != null) {
+            Product product = backendClient.getProductDetail(id);
+            if (product != null) {
+                return product;
+            }
+        }
+        
+        // Fallback: datos locales
         return new Product(
             id, 
             "Zapato Casual Premium", 

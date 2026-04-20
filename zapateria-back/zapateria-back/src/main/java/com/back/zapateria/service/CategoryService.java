@@ -19,6 +19,13 @@ public class CategoryService {
     public Category create(Category c) { return categoryRepository.save(c); }
 
     public Optional<Category> getById(Long id) { return categoryRepository.findById(id); }
+    
+    public Optional<Category> getByName(String name) { return categoryRepository.findByNameIgnoreCase(name); }
+    
+    public Category getOrCreateByName(String name) {
+        return categoryRepository.findByNameIgnoreCase(name)
+                .orElseGet(() -> categoryRepository.save(new Category(name)));
+    }
 
     public void delete(Long id) { categoryRepository.deleteById(id); }
 }

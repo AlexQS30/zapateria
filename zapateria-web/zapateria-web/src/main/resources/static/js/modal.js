@@ -23,7 +23,7 @@ function closeLoginModal() {
 }
 
 /**
- * Maneja el login desde el modal
+ * Maneja el login desde el modal con manejo robusto de errores
  */
 async function handleModalLogin(event) {
     event.preventDefault();
@@ -53,20 +53,47 @@ async function handleModalLogin(event) {
     loginBtn.disabled = true;
     
     try {
+        // Verificar que la función exista
+        if (typeof window.loginUser !== 'function') {
+            throw new Error('Función de login no disponible. Por favor recarga la página.');
+        }
+        
         // Llamar al servicio de login desde auth-integration.js
         const result = await window.loginUser(email, password);
         
         if (result.success) {
             alert(`¡Bienvenido ${result.user.firstName}!`);
             closeLoginModal();
+            // Limpiar formulario
+            emailInput.value = '';
+            passwordInput.value = '';
             // Redirigir según el rol
-            window.redirectByRole();
+            if (typeof window.redirectByRole === 'function') {
+                window.redirectByRole();
+            } else {
+                window.location.href = '/';
+            }
         } else {
-            alert(`Error: ${result.message}`);
+            // Mostrar mensaje de error específico
+            const errorMsg = result.message || 'Error desconocido en el login';
+            console.error('Error en login:', errorMsg);
+            alert(`Error: ${errorMsg}`);
         }
     } catch (error) {
-        console.error('Error en login modal:', error);
-        alert('Error de conexión con el servidor');
+        console.error('Error en login modal:', error.message, error.stack);
+        
+        // Mostrar mensaje de error amigable
+        let userMessage = 'Error de conexión con el servidor';
+        
+        if (error.message.includes('not a function')) {
+            userMessage = 'Error: Las funciones de autenticación no están disponibles. Por favor recarga la página.';
+        } else if (error.message.includes('Failed to fetch')) {
+            userMessage = 'Error: No se puede conectar con el servidor. Verifica que esté ejecutándose en http://localhost:8081';
+        } else if (error.message) {
+            userMessage = error.message;
+        }
+        
+        alert(userMessage);
     } finally {
         // Restaurar estado del botón
         loginBtn.textContent = originalText;

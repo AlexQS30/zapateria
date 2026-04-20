@@ -1,5 +1,7 @@
 package com.back.zapateria.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.io.Serializable;
@@ -16,6 +18,7 @@ public class Product implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @JsonIgnore
     private Category category;
 
     private int stock;
@@ -61,6 +64,7 @@ public class Product implements Serializable {
     public void setCategory(Category category) { this.category = category; }
 
     @JsonProperty("categoryId")
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     public Long getCategoryId() {
         return category != null ? category.getId() : null;
     }

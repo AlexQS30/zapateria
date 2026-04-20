@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CartServiceTest {
 
+    // Este test valida que el carrito guarda cantidades, elimina productos y se puede vaciar por usuario.
     @Test
     void add_get_clear_cart_behaviour() {
         CartService cs = new CartService();
@@ -25,5 +26,13 @@ class CartServiceTest {
         assertTrue(cs.getCart("u1").isEmpty());
     }
 
-    // Este test comprueba el comportamiento en memoria del carrito.
+    // Este test verifica que sumar el mismo producto aumenta su cantidad en lugar de reemplazarla.
+    @Test
+    void addToCart_accumulatesQuantityForSameProduct() {
+        CartService cs = new CartService();
+        cs.addToCart("u1", "p1", 1);
+        cs.addToCart("u1", "p1", 3);
+
+        assertEquals(4, cs.getCart("u1").get("p1"));
+    }
 }

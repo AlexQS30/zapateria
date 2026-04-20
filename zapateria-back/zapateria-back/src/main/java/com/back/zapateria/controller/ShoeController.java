@@ -38,6 +38,11 @@ public class ShoeController {
         return ResponseEntity.ok(shoeService.getCategoryProducts(category));
     }
 
+    @GetMapping("/by-category-id/{categoryId}")
+    public ResponseEntity<List<Product>> byCategoryId(@PathVariable Long categoryId) {
+        return ResponseEntity.ok(shoeService.getProductsByCategoryId(categoryId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Product> getOne(@PathVariable String id) {
         Product p = shoeService.getProductDetail(id);
