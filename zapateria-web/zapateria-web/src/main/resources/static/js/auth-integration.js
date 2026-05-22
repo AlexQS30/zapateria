@@ -2,6 +2,42 @@
 // Guarda esto en: src/main/resources/static/js/auth-integration.js
 
 const API_BASE_URL = 'http://localhost:8081/api/auth';
+const AUTH_TOKEN_KEY = 'auth_token';
+const USER_KEY = 'user';
+
+window.getAuthToken = function() {
+    return localStorage.getItem(AUTH_TOKEN_KEY);
+};
+
+window.setAuthSession = function(user, token) {
+    sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+    sessionStorage.setItem('loggedIn', 'true');
+
+    if (token) {
+        localStorage.setItem(AUTH_TOKEN_KEY, token);
+    } else {
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+    }
+};
+
+window.clearAuthSession = function() {
+    sessionStorage.removeItem(USER_KEY);
+    sessionStorage.removeItem('loggedIn');
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+};
+
+window.authFetch = async function(url, options = {}) {
+    const token = window.getAuthToken();
+    const headers = {
+        ...(options.headers || {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+    };
+
+    return fetch(url, {
+        ...options,
+        headers
+    });
+};
 
 /**
  * Realiza login del usuario con manejo robusto de errores
@@ -38,20 +74,22 @@ window.loginUser = async function(email, password) {
 
         if (data.success) {
             // Guardar datos del usuario en sessionStorage (incluyendo role)
-            sessionStorage.setItem('user', JSON.stringify({
+            const user = {
                 id: data.id,
                 email: data.email,
                 firstName: data.firstName,
                 lastName: data.lastName,
                 role: data.role
-            }));
-            sessionStorage.setItem('loggedIn', 'true');
+            };
+
+            window.setAuthSession(user, data.token);
             
             console.log('Login exitoso para:', email);
             
             return {
                 success: true,
-                user: data,
+                user,
+                token: data.token || null,
                 message: data.message || 'Login exitoso'
             };
         } else {
@@ -186,7 +224,7 @@ function registeruser() {
  */
 window.checkEmailExists = async function(email) {
     try {
-        const response = await fetch(`${API_BASE_URL}/check-email/${email}`);
+        const response = await fetch(`${API_BASE_URL}/check-email/${encodeURIComponent(email)}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -247,8 +285,7 @@ window.isUserLoggedIn = function() {
  * Cierra la sesión del usuario
  */
 window.logout = function() {
-    sessionStorage.removeItem('user');
-    sessionStorage.removeItem('loggedIn');
+    window.clearAuthSession();
     console.log('Sesión cerrada');
     window.location.href = '/login';
 };
@@ -371,7 +408,7 @@ if (typeof module !== 'undefined' && module.exports) {
 
 // ================= LISTAR USUARIOS =================
 async function loadUsers() {
-    const res = await fetch(`${API_BASE_URL}/users`);
+    const res = await window.authFetch(`${API_BASE_URL}/users`);
     const users = await res.json();
 
 const table = document.getElementById("usersTable");
@@ -431,7 +468,7 @@ function closeModal() {
 async function deleteUser(id) {
     if (!confirm("¿Eliminar usuario?")) return;
 
-    await fetch(`${API_BASE_URL}/users/${id}`, {
+    await window.authFetch(`${API_BASE_URL}/users/${id}`, {
         method: "DELETE"
     });
 
@@ -448,7 +485,7 @@ function updateUser() {
         role: document.getElementById("editRole").value
     };
 
-    fetch(`${API_BASE_URL}/users/${id}`, {
+    window.authFetch(`${API_BASE_URL}/users/${id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"

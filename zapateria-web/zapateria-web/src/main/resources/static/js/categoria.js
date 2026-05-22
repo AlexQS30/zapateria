@@ -52,6 +52,16 @@ function getCategoryIdFromPath() {
     const path = window.location.pathname;
     console.log('Pathname actual:', path);
 
+    const queryCategory = new URLSearchParams(window.location.search).get('categoria');
+    if (queryCategory) {
+        const normalizedQuery = normalizeSlug(queryCategory);
+        const queryCategoryMatch = categories.find(cat => normalizeSlug(cat.name) === normalizedQuery);
+        if (queryCategoryMatch) {
+            console.log('Categoría encontrada por query:', queryCategoryMatch);
+            return queryCategoryMatch.id;
+        }
+    }
+
     const slug = path.split('/').filter(Boolean).pop();
     if (!slug) {
         return null;
@@ -158,11 +168,16 @@ function renderProducts(products) {
         return;
     }
     
-    // Crear tarjeta para cada producto
+    const fragment = document.createDocumentFragment();
+
     products.forEach(product => {
         const card = createProductCard(product);
-        productsGrid.appendChild(card);
+        if (card) {
+            fragment.appendChild(card);
+        }
     });
+
+    productsGrid.appendChild(fragment);
     
     console.log('Productos renderizados:', products.length);
 }
@@ -194,27 +209,50 @@ function createProductCard(product) {
     if (hasHalfStar) {
         starsHtml += '<i class="fas fa-star-half-alt"></i>';
     }
-    while ((fullStars + (hasHalfStar ? 1 : 0)) < 5) {
+    for (let i = fullStars + (hasHalfStar ? 1 : 0); i < 5; i++) {
         starsHtml += '<i class="far fa-star"></i>';
     }
     
-    // Usar la imagen del producto o una por defecto
-    const imageUrl = product.image || 'https://source.unsplash.com/random/280x280?shoe';
-    
-    card.innerHTML = `
-        <div class="product-image">
-            <img src="${imageUrl}" alt="${product.name}" loading="lazy">
-            ${badgeHtml}
-        </div>
-        <h4>${product.name}</h4>
-        <p class="price">S/. ${product.price.toFixed(2)}</p>
-        <div class="rating">
-            ${starsHtml}
-        </div>
-        <button class="btn btn-outline" onclick="addToCart('${product.id}', '${product.name}', ${product.price})">
-            Agregar al Carrito
-        </button>
-    `;
+    const imageUrl = product.image || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=280&h=280&fit=crop';
+    const priceValue = Number(product.price || 0);
+
+    const imageWrapper = document.createElement('div');
+    imageWrapper.className = 'product-image';
+
+    const image = document.createElement('img');
+    image.src = imageUrl;
+    image.alt = product.name || 'Producto';
+    image.loading = 'lazy';
+    imageWrapper.appendChild(image);
+
+    if (badgeHtml) {
+        const badge = document.createElement('span');
+        badge.className = discount > 0 ? 'badge' : 'badge new';
+        badge.textContent = discount > 0 ? `-${discount}%` : 'Nuevo';
+        imageWrapper.appendChild(badge);
+    }
+
+    const title = document.createElement('h4');
+    title.textContent = product.name || 'Producto';
+
+    const price = document.createElement('p');
+    price.className = 'price';
+    price.textContent = `S/. ${priceValue.toFixed(2)}`;
+
+    const ratingWrapper = document.createElement('div');
+    ratingWrapper.className = 'rating';
+    ratingWrapper.innerHTML = starsHtml;
+
+    const button = document.createElement('button');
+    button.className = 'btn btn-outline';
+    button.textContent = 'Agregar al Carrito';
+    button.addEventListener('click', () => addToCart(product.id, product.name, priceValue));
+
+    card.appendChild(imageWrapper);
+    card.appendChild(title);
+    card.appendChild(price);
+    card.appendChild(ratingWrapper);
+    card.appendChild(button);
     
     return card;
 }

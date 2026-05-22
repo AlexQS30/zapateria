@@ -14,7 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -47,7 +46,9 @@ class LoginServiceTest {
             Field passwordEncoderField = LoginService.class.getDeclaredField("passwordEncoder");
             passwordEncoderField.setAccessible(true);
             passwordEncoderField.set(loginService, passwordEncoder);
-        } catch (Exception ignored) {}
+        } catch (NoSuchFieldException | IllegalAccessException ignored) {
+            throw new IllegalStateException("No se pudo inyectar el mock en LoginService", ignored);
+        }
 
         User activeUser = buildUser(1L, "test@example.com", "encoded-password", true, "USER");
         store.add(activeUser);

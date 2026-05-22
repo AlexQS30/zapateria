@@ -40,5 +40,29 @@ COMMENT ON COLUMN users.is_active IS 'Indica si el usuario está activo';
 INSERT INTO users (email, password, first_name, last_name, phone_number, address, city, postal_code, is_active)
 VALUES ('test@example.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcg7b3XeKeUxWdeS86E36jbMxO2', 'Test', 'User', '987654321', 'Calle 123', 'Lima', '01001', true);
 
+-- Categorías y productos para restaurar el catálogo visual
+-- Ejecutar sobre una base de datos vacía o antes de volver a cargar datos de prueba
+ALTER TABLE IF EXISTS category ADD COLUMN IF NOT EXISTS image VARCHAR(500);
+
+DELETE FROM product;
+DELETE FROM category;
+
+INSERT INTO category (id, name, image) VALUES
+(1, 'Hombre', 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop'),
+(2, 'Mujer', 'https://images.unsplash.com/photo-1543163521-9efcc06814ee?w=400&h=300&fit=crop'),
+(3, 'Deportivos', 'https://images.unsplash.com/photo-1541959227685-cdde63974b53?w=400&h=300&fit=crop'),
+(4, 'Formales', 'https://images.unsplash.com/photo-1507222405253-b8ff5d6c0937?w=400&h=300&fit=crop'),
+(5, 'Accesorios', 'https://images.unsplash.com/photo-1572307480616-406f0ee9293e?w=400&h=300&fit=crop');
+
+INSERT INTO product (id, name, price, image, category_id, stock, is_new, discount, rating) VALUES
+('1','Zapato Casual Premium',189.00,'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop',1,20,false,20,4.5),
+('2','Zapatilla Deportiva Elite',249.00,'https://images.unsplash.com/photo-1460353581641-694a62b78e76?w=400&h=400&fit=crop',3,15,true,0,5.0),
+('3','Sandalia Cómoda de Cuero',149.00,'https://images.unsplash.com/photo-1562183241-b937e341ade7?w=400&h=400&fit=crop',2,18,false,0,4.0),
+('4','Zapato Formal Ejecutivo',299.00,'https://images.unsplash.com/photo-1507222405253-b8ff5d6c0937?w=400&h=400&fit=crop',4,12,false,15,4.8),
+('5','Derby Clásico',279.00,'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop',4,8,false,10,4.7),
+('6','Kit de Limpieza Premium',79.00,'https://images.unsplash.com/photo-1572307480616-406f0ee9293e?w=400&h=400&fit=crop',5,50,true,0,4.1),
+('7','Zapato Infantil Colorido',129.00,'https://images.unsplash.com/photo-1541959227685-cdde63974b53?w=400&h=400&fit=crop',3,25,true,5,4.3),
+('8','Tenis Casual Urbano',179.00,'https://images.unsplash.com/photo-1460353581641-694a62b78e76?w=400&h=400&fit=crop',1,30,false,0,4.4);
+
 -- Seleccionar para verificar
 SELECT * FROM users;

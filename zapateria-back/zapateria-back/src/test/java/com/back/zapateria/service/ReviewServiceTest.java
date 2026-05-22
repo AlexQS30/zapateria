@@ -1,17 +1,20 @@
 package com.back.zapateria.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import static org.mockito.Mockito.when;
+import org.mockito.MockitoAnnotations;
+
 import com.back.zapateria.model.Product;
 import com.back.zapateria.model.Review;
 import com.back.zapateria.repository.ProductRepository;
 import com.back.zapateria.repository.PurchaseRepository;
 import com.back.zapateria.repository.ReviewRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 class ReviewServiceTest {
 
@@ -39,7 +42,9 @@ class ReviewServiceTest {
             f3.setAccessible(true); f3.set(reviewService, productRepository);
             // mock save to return the entity provided
             org.mockito.Mockito.when(reviewRepository.save(org.mockito.Mockito.any())).thenAnswer(i -> i.getArgument(0));
-        } catch (Exception ignored) {}
+        } catch (NoSuchFieldException | IllegalAccessException ignored) {
+            throw new IllegalStateException("No se pudo inyectar el mock en ReviewService", ignored);
+        }
     }
 
     // Este test valida que solo se permita crear una reseña cuando el usuario ya compró el producto.

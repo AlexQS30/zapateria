@@ -1,7 +1,5 @@
 package com.back.zapateria.config;
 
-import org.junit.jupiter.api.Test;
-
 public class SecurityConfigTest {
 
     // Tests para configuración de seguridad (comentadas por ahora)

@@ -1,12 +1,14 @@
 package com.web.zapateria.controller;
 
-import com.web.zapateria.service.ShoeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.web.zapateria.service.ShoeService;
+
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -75,18 +77,15 @@ public class HomeController {
     public String categoriaQuery(@RequestParam(value = "categoria", defaultValue = "") String categoria) {
         if (categoria == null) return "redirect:/";
         String c = categoria.trim().toLowerCase();
-        switch (c) {
-            case "hombre": return "redirect:/hombre";
-            case "mujer": return "redirect:/mujer";
-            case "niños":
-            case "ninos": return "redirect:/ninos";
-            case "deportivos": return "redirect:/deportivos";
-            case "formales": return "redirect:/formales";
-            case "accesorios": return "redirect:/accesorios";
-            default:
-                // fallback: redirect to home
-                return "redirect:/";
-        }
+        return switch (c) {
+            case "hombre" -> "redirect:/hombre";
+            case "mujer" -> "redirect:/mujer";
+            case "niños", "ninos" -> "redirect:/ninos";
+            case "deportivos" -> "redirect:/deportivos";
+            case "formales" -> "redirect:/formales";
+            case "accesorios" -> "redirect:/accesorios";
+            default -> "redirect:/";
+        };
     }
 
     @GetMapping("/producto")

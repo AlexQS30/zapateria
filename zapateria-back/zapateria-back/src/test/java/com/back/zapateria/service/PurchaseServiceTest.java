@@ -1,18 +1,20 @@
 package com.back.zapateria.service;
 
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import static org.mockito.Mockito.when;
+import org.mockito.MockitoAnnotations;
+
 import com.back.zapateria.model.Product;
 import com.back.zapateria.model.Purchase;
 import com.back.zapateria.repository.ProductRepository;
 import com.back.zapateria.repository.PurchaseRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 class PurchaseServiceTest {
 
@@ -37,7 +39,9 @@ class PurchaseServiceTest {
             f2.set(purchaseService, productRepository);
             // default save should return the passed entity to mimic repository behavior
             org.mockito.Mockito.when(purchaseRepository.save(org.mockito.Mockito.any())).thenAnswer(i -> i.getArgument(0));
-        } catch (Exception ignored) {}
+        } catch (NoSuchFieldException | IllegalAccessException ignored) {
+            throw new IllegalStateException("No se pudo inyectar el mock en PurchaseService", ignored);
+        }
     }
 
     // Este test valida que una compra se construye con los productos encontrados en el repositorio.

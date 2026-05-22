@@ -104,7 +104,7 @@ function renderCategories(categories) {
     categories.forEach(cat => {
         const card = document.createElement('div');
         card.className = 'category-card';
-        const imgUrl = `https://images.unsplash.com/random/400x400?${encodeURIComponent('shoe,' + (cat.name || 'shoe'))}`;
+        const imgUrl = cat.imageUrl || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop';
         card.innerHTML = `
             <div class="category-image">
                 <img src="${imgUrl}" alt="${escapeHtml(cat.name)}" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
@@ -154,7 +154,7 @@ function renderProducts(products) {
         card.className = 'product-card';
         card.innerHTML = `
             <div class="product-image">
-                <img src="${escapeHtml(p.imageUrl || 'https://source.unsplash.com/random/280x280?shoe')}" alt="${escapeHtml(p.name)}" loading="lazy">
+                <img src="${escapeHtml(p.imageUrl || 'https://images.unsplash.com/photo-1460353581641-694a62b78e76?w=280&h=280&fit=crop')}" alt="${escapeHtml(p.name)}" loading="lazy">
                 ${p.onOffer ? '<span class="badge-discount">- ' + Math.round((p.discount||0) * 100) + '%</span>' : ''}
             </div>
             <div class="product-info">
@@ -193,7 +193,7 @@ function fetchProductDetail(id) {
 function renderProductDetail(p) {
     // main image
     const mainImg = document.querySelector('.product-gallery .main-image img');
-    if (mainImg) mainImg.src = p.image || (p.imageUrl || 'https://source.unsplash.com/random/500x500?shoe');
+    if (mainImg) mainImg.src = p.image || (p.imageUrl || 'https://images.unsplash.com/photo-1507222405253-b8ff5d6c0937?w=500&h=500&fit=crop');
     // badge (discount)
     const badge = document.querySelector('.product-gallery .main-image .badge') || document.querySelector('.product-gallery .main-image span.badge');
     if (badge) {
@@ -248,7 +248,7 @@ function renderProductDetail(p) {
                         const card = document.createElement('div');
                         card.className = 'product-card';
                         card.innerHTML = `
-                            <div class="product-image"><img src="${escapeHtml(x.image||'https://source.unsplash.com/random/250x250?shoe')}" alt="${escapeHtml(x.name)}"></div>
+                            <div class="product-image"><img src="${escapeHtml(x.image||'https://images.unsplash.com/photo-1572307480616-406f0ee9293e?w=250&h=250&fit=crop')}" alt="${escapeHtml(x.name)}"></div>
                             <h4 class="product-name">${escapeHtml(x.name)}</h4>
                             <p class="price">S/. ${Number(x.price).toFixed(2)}</p>
                             <div class="rating">${renderStars(x.rating||4)}</div>

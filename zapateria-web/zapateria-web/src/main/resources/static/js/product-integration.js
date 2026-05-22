@@ -4,16 +4,20 @@
 class FootStyleAPI {
     constructor(baseUrl = 'http://localhost:8080/api') {
         this.baseUrl = baseUrl;
-        this.token = localStorage.getItem('auth_token') || null;
+    }
+
+    getToken() {
+        return (typeof window.getAuthToken === 'function' ? window.getAuthToken() : localStorage.getItem('auth_token')) || null;
     }
 
     // Métodos auxiliares
     async request(endpoint, method = 'GET', body = null) {
+        const token = this.getToken();
         const options = {
             method,
             headers: {
                 'Content-Type': 'application/json',
-                ...(this.token && { 'Authorization': `Bearer ${this.token}` })
+                ...(token && { 'Authorization': `Bearer ${token}` })
             }
         };
 
@@ -150,7 +154,7 @@ async function renderCategories() {
         grid.innerHTML = categories.map(cat => `
             <div class="category-card">
                 <div class="category-image">
-                    <img src="${cat.imageUrl || 'https://via.placeholder.com/400'}" 
+                    <img src="${cat.imageUrl || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop'}" 
                          alt="${cat.name}" 
                          loading="lazy">
                 </div>
@@ -183,7 +187,7 @@ async function renderOffers() {
         grid.innerHTML = offers.slice(0, 4).map(offer => `
             <div class="category-card" style="position: relative;">
                 <div class="category-image" style="position: relative;">
-                    <img src="${offer.imageUrl || 'https://via.placeholder.com/400'}" 
+                    <img src="${offer.imageUrl || 'https://images.unsplash.com/photo-1460353581641-694a62b78e76?w=400&h=400&fit=crop'}" 
                          alt="${offer.categoryName}"
                          loading="lazy">
                     <div style="position: absolute; top: 15px; right: 15px; 
@@ -224,7 +228,7 @@ async function renderFeaturedProducts() {
         grid.innerHTML = products.map(product => `
             <div class="product-card">
                 <div class="product-image">
-                    <img src="${product.imageUrl || 'https://via.placeholder.com/400'}" 
+                    <img src="${product.imageUrl || 'https://images.unsplash.com/photo-1507222405253-b8ff5d6c0937?w=400&h=400&fit=crop'}" 
                          alt="${product.name}"
                          loading="lazy"
                          style="width: 100%; height: 100%; object-fit: cover;">

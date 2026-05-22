@@ -29,14 +29,14 @@
                 <!-- Galería de Imágenes -->
                 <div class="product-gallery">
                     <div class="main-image">
-                        <img src="https://source.unsplash.com/random/500x500?shoe,luxury" alt="Zapato Casual Premium" loading="lazy">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop" alt="Zapato Casual Premium" loading="lazy">
                         <span class="badge">-20%</span>
                     </div>
                     <div class="thumbnail-gallery">
-                        <img src="https://source.unsplash.com/random/80x80?shoe,1" alt="Thumbnail 1" class="active" loading="lazy">
-                        <img src="https://source.unsplash.com/random/80x80?shoe,2" alt="Thumbnail 2" loading="lazy">
-                        <img src="https://source.unsplash.com/random/80x80?shoe,3" alt="Thumbnail 3" loading="lazy">
-                        <img src="https://source.unsplash.com/random/80x80?shoe,4" alt="Thumbnail 4" loading="lazy">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=80&h=80&fit=crop" alt="Thumbnail 1" class="active" loading="lazy">
+                        <img src="https://images.unsplash.com/photo-1460353581641-694a62b78e76?w=80&h=80&fit=crop" alt="Thumbnail 2" loading="lazy">
+                        <img src="https://images.unsplash.com/photo-1507222405253-b8ff5d6c0937?w=80&h=80&fit=crop" alt="Thumbnail 3" loading="lazy">
+                        <img src="https://images.unsplash.com/photo-1572307480616-406f0ee9293e?w=80&h=80&fit=crop" alt="Thumbnail 4" loading="lazy">
                     </div>
                 </div>
 
@@ -224,7 +224,7 @@
             <div class="products-grid">
                 <div class="product-card" th:each="i : ${#numbers.sequence(1, 4)}">
                     <div class="product-image">
-                        <img th:src="'https://via.placeholder.com/250x250?text=Relacionado+' + ${i}" th:alt="'Producto Relacionado ' + ${i}">
+                        <img th:src="${i == 1 ? 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=250&h=250&fit=crop' : (i == 2 ? 'https://images.unsplash.com/photo-1460353581641-694a62b78e76?w=250&h=250&fit=crop' : (i == 3 ? 'https://images.unsplash.com/photo-1507222405253-b8ff5d6c0937?w=250&h=250&fit=crop' : 'https://images.unsplash.com/photo-1572307480616-406f0ee9293e?w=250&h=250&fit=crop'))}" th:alt="'Producto Relacionado ' + ${i}">
                     </div>
                     <h4 th:text="'Producto Relacionado ' + ${i}">Producto</h4>
                     <p class="price">S/. <span th:text="${199 + (i * 20)}">199</span>.00</p>

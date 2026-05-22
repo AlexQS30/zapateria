@@ -21,6 +21,9 @@ public class LoginService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired(required = false)
+    private JwtService jwtService;
+
     // ================= LOGIN =================
     public LoginResponse authenticate(LoginRequest req) {
 
@@ -37,12 +40,15 @@ public class LoginService {
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword()))
             return fail("Contraseña incorrecta");
 
+        String token = generateToken(user);
+
         return new LoginResponse(
                 user.getId(),
                 user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getRole(),
+            token,
                 "Login exitoso",
                 true
         );
@@ -67,6 +73,7 @@ public class LoginService {
         u.setIsActive(true);
 
         User saved = userRepository.save(u);
+        String token = generateToken(saved);
 
         return new LoginResponse(
                 saved.getId(),
@@ -74,6 +81,7 @@ public class LoginService {
                 saved.getFirstName(),
                 saved.getLastName(),
                 saved.getRole(),
+            token,
                 "Usuario registrado",
                 true
         );
@@ -139,8 +147,13 @@ public class LoginService {
                 u.getFirstName(),
                 u.getLastName(),
                 u.getRole(),
+                generateToken(u),
                 msg,
                 true
         );
+    }
+
+    private String generateToken(User user) {
+        return jwtService != null ? jwtService.generateToken(user) : null;
     }
 }

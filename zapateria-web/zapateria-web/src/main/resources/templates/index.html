@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo}">FootStyle - Inicio</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <section class="hero" style="padding: 80px 0; background: linear-gradient(135deg, #111827, #1f2937); color: white;">
+        <div class="container">
+            <h1 style="font-size: 3rem; margin-bottom: 16px;">FootStyle</h1>
+            <p style="font-size: 1.1rem; max-width: 700px;">Calzado y accesorios para hombre, mujer y niños. Explora nuestras categorías y ofertas destacadas.</p>
+        </div>
+    </section>
+
+    <section class="categories-section" style="padding: 60px 0;">
+        <div class="container">
+            <h2 style="margin-bottom: 24px;">Categorias</h2>
+            <div class="categories-grid">
+                <div class="category-card" th:each="category : ${categories}">
+                    <div class="category-image">
+                        <img th:src="${category.imageUrl}" th:alt="${category.name}" loading="lazy">
+                    </div>
+                    <div class="category-info">
+                        <h3 th:text="${category.name}">Categoria</h3>
+                        <p th:text="${category.description}">Descripcion</p>
+                        <a th:href="@{/categoria(categoria=${category.id})}" class="btn btn-secondary">Ver Coleccion</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="products-section" style="padding: 60px 0; background: #f8fafc;">
+        <div class="container">
+            <h2 style="margin-bottom: 24px;">Productos destacados</h2>
+            <div class="products-grid">
+                <div class="product-card" th:each="product : ${featuredProducts}">
+                    <div class="product-image">
+                        <img th:src="${product.imageUrl}" th:alt="${product.name}" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <h4 th:text="${product.name}">Producto</h4>
+                        <p th:text="${product.description}">Descripcion</p>
+                        <p class="product-price" th:text="'S/. ' + ${#numbers.formatDecimal(product.price, 1, 2)}">S/. 0.00</p>
+                        <a th:href="@{/producto(id=${product.id})}" class="btn btn-outline">Ver detalle</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
