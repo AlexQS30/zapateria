@@ -301,6 +301,44 @@
           }
         },
         {
+          "name": "Variantes de producto",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/shoes/1/variants",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "shoes",
+                "1",
+                "variants"
+              ]
+            },
+            "description": "Retorna variantes (talla, color, stock) para un producto."
+          }
+        },
+        {
+          "name": "Disponibilidad de producto",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/shoes/1/availability",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "shoes",
+                "1",
+                "availability"
+              ]
+            },
+            "description": "Retorna stock total y variantes disponibles para un producto."
+          }
+        },
+        {
           "name": "Crear producto",
           "request": {
             "method": "POST",
@@ -316,7 +354,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id\": \"10\",\n  \"name\": \"Zapato Demo\",\n  \"price\": 199.9,\n  \"image\": \"/img/demo.jpg\",\n  \"category\": {\n    \"id\": 1\n  },\n  \"new\": true,\n  \"stock\": 10,\n  \"discount\": 0,\n  \"rating\": 4.5\n}"
+              "raw": "{\n  \"id\": \"10\",\n  \"name\": \"Zapato Demo\",\n  \"price\": 199.9,\n  \"image\": \"/img/demo.jpg\",\n  \"category\": {\n    \"id\": 1\n  },\n  \"new\": true,\n  \"stock\": 10,\n  \"discount\": 0,\n  \"rating\": 4.5,\n  \"variants\": [\n    {\n      \"size\": \"39\",\n      \"color\": \"Negro\",\n      \"stock\": 4\n    },\n    {\n      \"size\": \"40\",\n      \"color\": \"Blanco\",\n      \"stock\": 6\n    }\n  ]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/shoes",
@@ -347,7 +385,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id\": \"10\",\n  \"name\": \"Zapato Demo Actualizado\",\n  \"price\": 219.9,\n  \"image\": \"/img/demo.jpg\",\n  \"category\": {\n    \"id\": 1\n  },\n  \"new\": false,\n  \"stock\": 8,\n  \"discount\": 10,\n  \"rating\": 4.7\n}"
+              "raw": "{\n  \"id\": \"10\",\n  \"name\": \"Zapato Demo Actualizado\",\n  \"price\": 219.9,\n  \"image\": \"/img/demo.jpg\",\n  \"category\": {\n    \"id\": 1\n  },\n  \"new\": false,\n  \"stock\": 8,\n  \"discount\": 10,\n  \"rating\": 4.7,\n  \"variants\": [\n    {\n      \"size\": \"39\",\n      \"color\": \"Negro\",\n      \"stock\": 3\n    },\n    {\n      \"size\": \"40\",\n      \"color\": \"Blanco\",\n      \"stock\": 5\n    }\n  ]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/shoes/10",
@@ -669,6 +707,120 @@
             },
             "description": "Lista las compras de un usuario. Requiere JWT."
           }
+        },
+        {
+          "name": "Checkout autenticado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"productId\": \"1\",\n      \"quantity\": 1,\n      \"size\": \"39\",\n      \"color\": \"Negro\"\n    }\n  ],\n  \"paymentMethod\": \"yape\",\n  \"shippingAddress\": \"Av. Principal 123\",\n  \"contactPhone\": \"999999999\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/purchases/checkout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "purchases",
+                "checkout"
+              ]
+            },
+            "description": "Registra una compra para el usuario autenticado con soporte de talla y color."
+          }
+        },
+        {
+          "name": "Mis compras",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/purchases/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "purchases",
+                "me"
+              ]
+            },
+            "description": "Lista compras del usuario autenticado."
+          }
+        },
+        {
+          "name": "Detalle de mi compra",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/purchases/me/{{purchaseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "purchases",
+                "me",
+                "{{purchaseId}}"
+              ]
+            },
+            "description": "Obtiene una compra puntual del usuario autenticado."
+          }
+        },
+        {
+          "name": "Actualizar estado de compra",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ENTREGADO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/purchases/{{purchaseId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "purchases",
+                "{{purchaseId}}",
+                "status"
+              ]
+            },
+            "description": "Actualiza el estado de una compra."
+          }
         }
       ]
     },
@@ -744,6 +896,10 @@
     {
       "key": "authToken",
       "value": ""
+    },
+    {
+      "key": "purchaseId",
+      "value": "p1"
     }
   ]
 }

@@ -2,25 +2,40 @@ package com.back.zapateria.service;
 
 import com.back.zapateria.model.Category;
 import com.back.zapateria.model.Product;
+import com.back.zapateria.model.ProductVariant;
 import com.back.zapateria.repository.ProductRepository;
+import com.back.zapateria.repository.ProductVariantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 public class ShoeService {
 
     private final ProductRepository productRepository;
+        private final ProductVariantRepository productVariantRepository;
     private CategoryService categoryService;
 
     @Autowired
-    public ShoeService(ProductRepository productRepository, CategoryService categoryService) {
-        this.productRepository = productRepository;
-        this.categoryService = categoryService;
-    }
+        public ShoeService(ProductRepository productRepository, ProductVariantRepository productVariantRepository, CategoryService categoryService) {
+                this.productRepository = productRepository;
+                this.productVariantRepository = productVariantRepository;
+                this.categoryService = categoryService;
+        }
+
+        /**
+         * Backwards-compatible constructor used by tests or frameworks that supply only
+         * ProductRepository and CategoryService. ProductVariantRepository will be null
+         * in this case and methods handle its absence.
+         */
+        public ShoeService(ProductRepository productRepository, CategoryService categoryService) {
+                this(productRepository, null, categoryService);
+        }
 
     // 🔹 obtener por categoría
     public List<Product> getCategoryProducts(String category) {
@@ -34,6 +49,26 @@ public class ShoeService {
     public Product getProductDetail(String id) {
         return productRepository.findById(id).orElse(null);
     }
+
+        public List<ProductVariant> getProductVariants(String productId) {
+                if (productVariantRepository == null || productId == null || productId.isBlank()) {
+                        return List.of();
+                }
+                return productVariantRepository.findByProduct_Id(productId);
+        }
+
+        public Map<String, Object> getAvailability(String productId) {
+                Product product = getProductDetail(productId);
+                List<ProductVariant> variants = getProductVariants(productId);
+
+                Map<String, Object> response = new LinkedHashMap<>();
+                response.put("productId", productId);
+                response.put("name", product != null ? product.getName() : null);
+                response.put("stock", product != null ? product.getStock() : 0);
+                response.put("hasStock", product != null && product.getStock() > 0);
+                response.put("variants", variants);
+                return response;
+        }
 
         // 🔹 obtener todos
         public List<Product> getAllProducts() {
@@ -56,6 +91,7 @@ public class ShoeService {
                         existing.setNew(update.isNew());
                         existing.setDiscount(update.getDiscount());
                         existing.setRating(update.getRating());
+                                existing.setVariants(update.getVariants());
                         return productRepository.save(existing);
                 }).orElse(null);
         }

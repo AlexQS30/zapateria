@@ -154,7 +154,7 @@ async function renderCategories() {
         grid.innerHTML = categories.map(cat => `
             <div class="category-card">
                 <div class="category-image">
-                    <img src="${cat.imageUrl || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop'}" 
+                    <img src="${cat.imageUrl || cat.image || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop'}" 
                          alt="${cat.name}" 
                          loading="lazy">
                 </div>
@@ -187,7 +187,7 @@ async function renderOffers() {
         grid.innerHTML = offers.slice(0, 4).map(offer => `
             <div class="category-card" style="position: relative;">
                 <div class="category-image" style="position: relative;">
-                    <img src="${offer.imageUrl || 'https://images.unsplash.com/photo-1460353581641-694a62b78e76?w=400&h=400&fit=crop'}" 
+                    <img src="${offer.imageUrl || offer.image || 'https://images.unsplash.com/photo-1460353581641-694a62b78e76?w=400&h=400&fit=crop'}" 
                          alt="${offer.categoryName}"
                          loading="lazy">
                     <div style="position: absolute; top: 15px; right: 15px; 

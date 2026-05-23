@@ -246,13 +246,32 @@ function createProductCard(product) {
     const button = document.createElement('button');
     button.className = 'btn btn-outline';
     button.textContent = 'Agregar al Carrito';
-    button.addEventListener('click', () => addToCart(product.id, product.name, priceValue));
+    button.addEventListener('click', () => addToCart(product));
+
+    const detailButton = document.createElement('button');
+    detailButton.className = 'btn btn-secondary';
+    detailButton.textContent = 'Ver detalle';
+    detailButton.addEventListener('click', () => {
+        window.location.href = `/producto?id=${encodeURIComponent(product.id)}`;
+    });
+
+    image.addEventListener('click', () => {
+        window.location.href = `/producto?id=${encodeURIComponent(product.id)}`;
+    });
+    image.style.cursor = 'pointer';
+
+    const actions = document.createElement('div');
+    actions.style.display = 'flex';
+    actions.style.gap = '8px';
+    actions.style.flexWrap = 'wrap';
+    actions.appendChild(detailButton);
+    actions.appendChild(button);
 
     card.appendChild(imageWrapper);
     card.appendChild(title);
     card.appendChild(price);
     card.appendChild(ratingWrapper);
-    card.appendChild(button);
+    card.appendChild(actions);
     
     return card;
 }
@@ -260,17 +279,34 @@ function createProductCard(product) {
 /**
  * Agrega un producto al carrito
  */
-function addToCart(productId, productName, productPrice) {
-    console.log('Agregando al carrito:', productId, productName, productPrice);
-    
-    // Actualizar badge del carrito
+function addToCart(product) {
+    const payload = {
+        productId: product.id,
+        name: product.name || 'Producto',
+        price: Number(product.price || 0),
+        imageUrl: product.image || product.imageUrl || '',
+        quantity: 1,
+        size: '37',
+        color: 'Negro'
+    };
+
+    if (typeof window.footstyleAddItemToCart === 'function') {
+        window.footstyleAddItemToCart(payload);
+        if (typeof window.footstyleRefreshCartBadge === 'function') {
+            window.footstyleRefreshCartBadge();
+        }
+        if (typeof window.showNotification === 'function') {
+            window.showNotification(`${payload.name} agregado al carrito`, 'success');
+        }
+        return;
+    }
+
     const cartBadge = document.querySelector('.action-item.cart .badge');
     if (cartBadge) {
-        cartBadge.textContent = parseInt(cartBadge.textContent || 0) + 1;
+        cartBadge.textContent = String((parseInt(cartBadge.textContent || '0', 10) || 0) + 1);
     }
-    
-    // Mostrar notificación
-    alert(`${productName} agregado al carrito`);
+
+    alert(`${payload.name} agregado al carrito`);
 }
 
 /**

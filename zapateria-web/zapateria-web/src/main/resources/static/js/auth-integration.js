@@ -24,6 +24,7 @@ window.clearAuthSession = function() {
     sessionStorage.removeItem(USER_KEY);
     sessionStorage.removeItem('loggedIn');
     localStorage.removeItem(AUTH_TOKEN_KEY);
+    window.renderAuthHeader && window.renderAuthHeader();
 };
 
 window.authFetch = async function(url, options = {}) {
@@ -281,6 +282,29 @@ window.isUserLoggedIn = function() {
     return sessionStorage.getItem('loggedIn') === 'true';
 };
 
+window.renderAuthHeader = function() {
+    const guestMenu = document.getElementById('auth-guest-menu');
+    const userMenu = document.getElementById('auth-user-menu');
+    const userName = document.getElementById('auth-user-name');
+    const user = window.getCurrentUser();
+
+    if (!guestMenu || !userMenu) {
+        return;
+    }
+
+    if (user && window.isUserLoggedIn()) {
+        guestMenu.style.display = 'none';
+        userMenu.style.display = 'flex';
+        if (userName) {
+            userName.textContent = user.firstName || user.email || 'Usuario';
+        }
+        return;
+    }
+
+    guestMenu.style.display = 'flex';
+    userMenu.style.display = 'none';
+};
+
 /**
  * Cierra la sesión del usuario
  */
@@ -499,3 +523,7 @@ function updateUser() {
         loadUsers();
     });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    window.renderAuthHeader();
+});

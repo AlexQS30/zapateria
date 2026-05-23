@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo}">Mis pedidos - FootStyle</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <main class="container" style="padding: 40px 15px 80px;">
+        <div style="display:flex; flex-direction:column; gap: 10px; margin-bottom: 24px;">
+            <h1 style="margin:0;">Mis pedidos</h1>
+            <p style="margin:0; color:#666;">Revisa el estado de tus compras, método de pago y reseña solo los productos que ya compraste.</p>
+        </div>
+
+        <div id="orders-message" class="empty-state" style="display:none;"></div>
+        <div id="orders-list" style="display:grid; gap:18px;"></div>
+    </main>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Inicia Sesión</h2>
+                <button class="modal-close" type="button" onclick="closeLoginModal()">&times;</button>
+            </div>
+            <form id="modalLoginForm" class="modal-form">
+                <div class="form-group-modal">
+                    <label for="modalEmail">Correo Electrónico</label>
+                    <input type="email" id="modalEmail" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group-modal">
+                    <label for="modalPassword">Contraseña</label>
+                    <input type="password" id="modalPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" id="modalLoginBtn" class="btn-login-modal">Inicia Sesión</button>
+            </form>
+        </div>
+    </div>
+
+    <script th:src="@{/js/auth-integration.js}"></script>
+    <script th:src="@{/js/modal.js}"></script>
+    <script th:src="@{/js/orders.js}"></script>
+</body>
+</html>

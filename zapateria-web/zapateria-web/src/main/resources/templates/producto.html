@@ -16,9 +16,9 @@
         <div class="container">
             <a href="/">Inicio</a>
             <span>/</span>
-            <a href="/hombre">Hombre</a>
+            <a th:href="${product != null and product.category != null} ? '/categoria?categoria=' + ${product.category} : '/hombre'" th:text="${product != null and product.category != null} ? ${product.category} : 'Hombre'">Hombre</a>
             <span>/</span>
-            <span>Zapato Casual Premium</span>
+            <span th:text="${product != null and product.name != null} ? ${product.name} : 'Zapato Casual Premium'">Zapato Casual Premium</span>
         </div>
     </div>
 
@@ -29,20 +29,20 @@
                 <!-- Galería de Imágenes -->
                 <div class="product-gallery">
                     <div class="main-image">
-                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop" alt="Zapato Casual Premium" loading="lazy">
-                        <span class="badge">-20%</span>
+                        <img th:src="${product != null and product.imageUrl != null} ? ${product.imageUrl} : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop'" th:alt="${product != null and product.name != null} ? ${product.name} : 'Zapato Casual Premium'" loading="lazy">
+                        <span class="badge" th:style="${product != null and product.discount > 0} ? '' : 'display:none;'" th:text="${product != null and product.discount > 0} ? '-' + ${product.discount} + '%' : ''">-20%</span>
                     </div>
                     <div class="thumbnail-gallery">
-                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=80&h=80&fit=crop" alt="Thumbnail 1" class="active" loading="lazy">
-                        <img src="https://images.unsplash.com/photo-1460353581641-694a62b78e76?w=80&h=80&fit=crop" alt="Thumbnail 2" loading="lazy">
-                        <img src="https://images.unsplash.com/photo-1507222405253-b8ff5d6c0937?w=80&h=80&fit=crop" alt="Thumbnail 3" loading="lazy">
-                        <img src="https://images.unsplash.com/photo-1572307480616-406f0ee9293e?w=80&h=80&fit=crop" alt="Thumbnail 4" loading="lazy">
+                        <img th:src="${product != null and product.imageUrl != null} ? ${product.imageUrl} : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=80&h=80&fit=crop'" th:data-full="${product != null and product.imageUrl != null} ? ${product.imageUrl} : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop'" th:alt="${product != null and product.name != null} ? ${product.name} + ' - foto 1' : 'Thumbnail 1'" class="active" loading="lazy">
+                        <img th:src="${product != null and product.imageUrl != null} ? ${product.imageUrl} : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=80&h=80&fit=crop'" th:data-full="${product != null and product.imageUrl != null} ? ${product.imageUrl} : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop'" th:alt="${product != null and product.name != null} ? ${product.name} + ' - foto 2' : 'Thumbnail 2'" loading="lazy">
+                        <img th:src="${product != null and product.imageUrl != null} ? ${product.imageUrl} : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=80&h=80&fit=crop'" th:data-full="${product != null and product.imageUrl != null} ? ${product.imageUrl} : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop'" th:alt="${product != null and product.name != null} ? ${product.name} + ' - foto 3' : 'Thumbnail 3'" loading="lazy">
+                        <img th:src="${product != null and product.imageUrl != null} ? ${product.imageUrl} : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=80&h=80&fit=crop'" th:data-full="${product != null and product.imageUrl != null} ? ${product.imageUrl} : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop'" th:alt="${product != null and product.name != null} ? ${product.name} + ' - foto 4' : 'Thumbnail 4'" loading="lazy">
                     </div>
                 </div>
 
                 <!-- Información del Producto -->
                 <div class="product-info">
-                    <h1>Zapato Casual Premium</h1>
+                    <h1 th:text="${product != null and product.name != null} ? ${product.name} : 'Zapato Casual Premium'">Zapato Casual Premium</h1>
                     
                     <div class="product-rating">
                         <div class="stars">
@@ -52,19 +52,17 @@
                             <i class="fas fa-star"></i>
                             <i class="fas fa-star-half-alt"></i>
                         </div>
-                        <span class="review-count">(245 reseñas)</span>
+                        <span class="review-count" th:text="'(' + (${product != null} ? ${product.reviews} : 245) + ' reseñas)'">(245 reseñas)</span>
                     </div>
 
                     <div class="product-pricing">
-                        <span class="original-price">S/. 249.00</span>
-                        <span class="current-price">S/. 199.00</span>
-                        <span class="discount">-20% DESCUENTO</span>
+                        <span class="original-price" th:style="${product != null and product.discount > 0} ? '' : 'display:none;'" th:text="${product != null and product.discount > 0} ? 'S/. ' + #numbers.formatDecimal(product.price,1,2) : 'S/. 249.00'">S/. 249.00</span>
+                        <span class="current-price" th:text="${product != null and product.discount > 0} ? 'S/. ' + #numbers.formatDecimal(product.finalPrice,1,2) : (${product != null} ? 'S/. ' + #numbers.formatDecimal(product.price,1,2) : 'S/. 199.00')">S/. 199.00</span>
+                        <span class="discount" th:style="${product != null and product.discount > 0} ? '' : 'display:none;'" th:text="${product != null and product.discount > 0} ? '-' + ${product.discount} + '% DESCUENTO' : ''">-20% DESCUENTO</span>
                     </div>
 
-                    <p class="product-description">
-                        Zapato casual premium elaborado con materiales de alta calidad. Diseño moderno que combina comodidad y estilo. 
-                        Perfecto para cualquier ocasión, desde trabajo hasta actividades casuales. Cuenta con tecnología de amortiguación 
-                        para mayor comodidad en cada paso.
+                    <p class="product-description" th:text="${product != null and product.description != null and !#strings.isEmpty(product.description)} ? ${product.description} : 'Zapato casual premium elaborado con materiales de alta calidad. Diseño moderno que combina comodidad y estilo. Perfecto para cualquier ocasión, desde trabajo hasta actividades casuales. Cuenta con tecnología de amortiguación para mayor comodidad en cada paso.'">
+                        Zapato casual premium elaborado con materiales de alta calidad. Diseño moderno que combina comodidad y estilo.
                     </p>
 
                     <div class="product-options">
@@ -288,6 +286,7 @@
         </div>
     </div>
 
+    <script th:src="@{/js/cart.js}"></script>
     <script th:src="@{/js/script.js}"></script>
     <script th:src="@{/js/auth-integration.js}"></script>
     <script th:src="@{/js/modal.js}"></script>

@@ -101,6 +101,12 @@ public class HomeController {
         return "contacto";
     }
 
+    @GetMapping("/mis-pedidos")
+    public String misPedidos(Model model) {
+        model.addAttribute("titulo", "Mis pedidos - FootStyle");
+        return "mis-pedidos";
+    }
+
     @GetMapping("/login")
     public String login(HttpSession session, Model model) {
         if (session.getAttribute("usuario") != null) {

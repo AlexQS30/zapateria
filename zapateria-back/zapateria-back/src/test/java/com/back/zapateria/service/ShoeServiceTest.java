@@ -2,6 +2,7 @@ package com.back.zapateria.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -20,7 +21,9 @@ import org.mockito.MockitoAnnotations;
 
 import com.back.zapateria.model.Category;
 import com.back.zapateria.model.Product;
+import com.back.zapateria.model.ProductVariant;
 import com.back.zapateria.repository.ProductRepository;
+import com.back.zapateria.repository.ProductVariantRepository;
 
 class ShoeServiceTest {
 
@@ -30,9 +33,13 @@ class ShoeServiceTest {
     private ProductRepository productRepository;
 
     @Mock
+    private ProductVariantRepository productVariantRepository;
+
+    @Mock
     private CategoryService categoryService;
 
     private final List<Product> store = new ArrayList<>();
+    private final List<ProductVariant> variantStore = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
@@ -40,7 +47,11 @@ class ShoeServiceTest {
 
         Category hombre = new Category("Hombre");
         hombre.setId(1L);
-        store.add(new Product("1", "Zapato Casual Premium", 189.0, "/img/casual.jpg", hombre, false, 20, 0, 4.5));
+        Product seeded = new Product("1", "Zapato Casual Premium", 189.0, "/img/casual.jpg", hombre, false, 20, 0, 4.5);
+        ProductVariant seededVariant = new ProductVariant(seeded, "39", "Negro", 5);
+        seeded.addVariant(seededVariant);
+        store.add(seeded);
+        variantStore.add(seededVariant);
 
         when(productRepository.findAll()).thenAnswer(invocation -> new ArrayList<>(store));
         when(productRepository.findById(anyString())).thenAnswer(invocation -> {
@@ -83,10 +94,18 @@ class ShoeServiceTest {
         doAnswer(invocation -> {
             String id = invocation.getArgument(0);
             store.removeIf(product -> product.getId().equals(id));
+            variantStore.removeIf(variant -> variant.getProduct() != null && id.equals(variant.getProduct().getId()));
             return null;
         }).when(productRepository).deleteById(anyString());
 
-        service = new ShoeService(productRepository, categoryService);
+        when(productVariantRepository.findByProduct_Id(anyString())).thenAnswer(invocation -> {
+            String productId = invocation.getArgument(0);
+            return variantStore.stream()
+                    .filter(variant -> variant.getProduct() != null && productId.equals(variant.getProduct().getId()))
+                    .toList();
+        });
+
+        service = new ShoeService(productRepository, productVariantRepository, categoryService);
     }
 
     // Este test verifica que el servicio devuelva todos los productos disponibles en el repositorio simulado.
@@ -157,5 +176,30 @@ class ShoeServiceTest {
     void getProductsByCategoryId_returnsEmptyWhenNoMatch() {
         List<Product> res = service.getProductsByCategoryId(999L);
         assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getProductVariants_returnsVariantsByProductId() {
+        List<ProductVariant> variants = service.getProductVariants("1");
+        assertEquals(1, variants.size());
+        assertEquals("39", variants.get(0).getSize());
+        assertEquals("Negro", variants.get(0).getColor());
+    }
+
+    @Test
+    void getAvailability_includesStockAndVariants() {
+        Map<String, Object> availability = service.getAvailability("1");
+
+        assertEquals("1", availability.get("productId"));
+        assertEquals("Zapato Casual Premium", availability.get("name"));
+        assertEquals(20, availability.get("stock"));
+        assertEquals(true, availability.get("hasStock"));
+        assertTrue(availability.containsKey("variants"));
+    }
+
+    @Test
+    void backwardCompatibleConstructor_handlesMissingVariantRepository() {
+        ShoeService legacyService = new ShoeService(productRepository, categoryService);
+        assertTrue(legacyService.getProductVariants("1").isEmpty());
     }
 }

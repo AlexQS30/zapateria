@@ -1,59 +1,1551 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${titulo}">FootStyle - Inicio</title>
+    <title th:text="${titulo}">FootStyle - Zapatos y Accesorios</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #101214;
+            --secondary: #c4a27e;
+            --accent: #b9786a;
+            --light: #f5f2ee;
+            --surface: #eee8e2;
+            --text-soft: #56656d;
+            --hero-overlay: rgba(8, 10, 12, 0.46);
+            --hero-dot: rgba(255, 255, 255, 0.55);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Manrope', 'Segoe UI', Tahoma, Geneva, sans-serif;
+            color: #333;
+            background: white;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .top-bar {
+            background: var(--primary);
+            color: white;
+            padding: 12px 0;
+            font-size: 0.9rem;
+        }
+
+        .top-bar .container {
+            display: flex;
+            justify-content: space-between;
+            gap: 25px;
+        }
+
+        .top-bar-left,
+        .top-bar-right {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .top-bar-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+            padding: 15px 0 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .navbar-brand h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 1px;
+            font-family: 'Cormorant Garamond', serif;
+            margin: 0;
+        }
+
+        .navbar-brand a {
+            text-decoration: none;
+        }
+
+        .navbar-search {
+            flex: 1;
+            max-width: 450px;
+            display: flex;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            overflow: hidden;
+        }
+
+        .navbar-search input {
+            flex: 1;
+            border: none;
+            padding: 12px 20px;
+            outline: none;
+            border-radius: 25px 0 0 25px;
+        }
+
+        .navbar-search button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            cursor: pointer;
+        }
+
+        .navbar-actions {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .action-item {
+            font-size: 22px;
+            cursor: pointer;
+            color: var(--primary);
+            position: relative;
+        }
+
+        .action-item .badge {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .menu-bar {
+            background: var(--primary);
+            margin-top: 15px;
+        }
+
+        .menu {
+            display: flex;
+            list-style: none;
+            justify-content: center;
+            gap: 0;
+            padding: 0;
+            margin: 0;
+            flex-wrap: wrap;
+        }
+
+        .menu li {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .menu li a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 12px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .menu li a:hover {
+            background: var(--secondary);
+            color: var(--primary);
+        }
+
+        .hero-slider {
+            position: relative;
+            height: clamp(500px, 72vh, 760px);
+            overflow: hidden;
+            color: white;
+            background: #20272b;
+        }
+
+        .hero-track {
+            position: relative;
+            height: 100%;
+        }
+
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(1.04);
+            transition: opacity 0.7s ease, transform 0.9s ease;
+            pointer-events: none;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        .hero-slide::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, var(--hero-overlay) 15%, rgba(0, 0, 0, 0.12) 100%);
+        }
+
+        .hero-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            inset: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 760px;
+            text-align: center;
+            padding: 64px 20px 30px;
+        }
+
+        .hero-kicker {
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 14px;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2.2rem, 5.5vw, 3.7rem);
+            margin-bottom: 18px;
+            font-family: 'Cormorant Garamond', serif;
+            line-height: 1.06;
+            font-weight: 700;
+        }
+
+        .hero-content p {
+            font-size: clamp(1rem, 2.3vw, 1.2rem);
+            margin-bottom: 28px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+            backdrop-filter: blur(4px);
+            cursor: pointer;
+            z-index: 3;
+            transition: background 0.25s ease;
+        }
+
+        .hero-control:hover {
+            background: rgba(255, 255, 255, 0.38);
+        }
+
+        .hero-control.prev {
+            left: 22px;
+        }
+
+        .hero-control.next {
+            right: 22px;
+        }
+
+        .hero-dots {
+            position: absolute;
+            left: 50%;
+            bottom: 24px;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 9px;
+            z-index: 3;
+        }
+
+        .hero-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: none;
+            background: var(--hero-dot);
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .hero-dot.active {
+            background: #ffffff;
+            transform: scale(1.15);
+        }
+
+        .btn {
+            padding: 14px 35px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            color: var(--primary);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: var(--primary);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .categories,
+        .featured,
+        .offers,
+        .benefits,
+        .testimonials,
+        .newsletter {
+            padding: 80px 20px;
+        }
+
+        .categories {
+            background: white;
+        }
+
+        .featured {
+            background: var(--light);
+        }
+
+        .offers {
+            background: linear-gradient(140deg, #1a1f23 0%, #2b3338 100%);
+        }
+
+        .benefits {
+            background: linear-gradient(180deg, #f5f2ee 0%, white 100%);
+        }
+
+        .testimonials {
+            background: white;
+        }
+
+        .newsletter {
+            background: linear-gradient(135deg, var(--primary) 0%, #1a1f23 100%);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-header h2,
+        .categories h2,
+        .featured h2,
+        .offers-title,
+        .newsletter-content h2 {
+            font-size: clamp(2rem, 4vw, 42px);
+            margin-bottom: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .offers-title,
+        .newsletter-content h2 {
+            color: white;
+            text-align: center;
+        }
+
+        .section-subtitle,
+        .offers-subtitle,
+        .newsletter-content > p {
+            font-size: 18px;
+            color: var(--text-soft);
+            text-align: center;
+        }
+
+        .offers-subtitle,
+        .newsletter-content > p {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 60px;
+        }
+
+        .categories-grid,
+        .products-grid,
+        .benefits-grid,
+        .testimonials-grid {
+            display: grid;
+            gap: 30px;
+        }
+
+        .categories-grid {
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        }
+
+        .products-grid {
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+
+        .benefits-grid {
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        }
+
+        .testimonials-grid {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .category-card,
+        .product-card,
+        .benefit-card,
+        .testimonial-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+        }
+
+        .category-card:hover,
+        .product-card:hover,
+        .benefit-card:hover,
+        .testimonial-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .category-image,
+        .product-image {
+            position: relative;
+            overflow: hidden;
+            background: #f5f2ee;
+        }
+
+        .category-image {
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(135deg, #d8ccc0 0%, #eee7df 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+        }
+
+        .product-image {
+            height: 270px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: #999;
+        }
+
+        .category-image img,
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .category-info,
+        .product-info {
+            padding: 25px;
+            text-align: center;
+        }
+
+        .product-info {
+            text-align: left;
+            padding: 20px;
+        }
+
+        .category-info h3,
+        .product-name,
+        .benefit-card h3,
+        .testimonial-author h4 {
+            color: var(--primary);
+        }
+
+        .category-info h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .category-info p,
+        .benefit-card p,
+        .testimonial-author p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .product-category {
+            font-size: 12px;
+            color: var(--secondary);
+            margin: 5px 0;
+            font-weight: 500;
+        }
+
+        .rating {
+            color: #ffc107;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .product-prices {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .price-original {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .product-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+
+        .badge-discount,
+        .badge-new {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        .badge-discount {
+            background: var(--accent);
+        }
+
+        .badge-new {
+            background: #28a745;
+        }
+
+        .product-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(16, 18, 20, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .product-card:hover .product-overlay {
+            opacity: 1;
+        }
+
+        .btn-icon {
+            background: var(--secondary);
+            color: var(--primary);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-icon:hover {
+            background: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .product-card .btn {
+            width: 100%;
+            font-size: 13px;
+        }
+
+        .offer-percent {
+            margin-bottom: 10px;
+            color: #c9a37e;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .benefit-card {
+            text-align: center;
+            padding: 40px;
+            border: 2px solid transparent;
+        }
+
+        .benefit-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            color: white;
+        }
+
+        .testimonial-card {
+            background: var(--surface);
+            padding: 30px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .testimonial-stars {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            color: #ffc107;
+            font-size: 14px;
+        }
+
+        .testimonial-text {
+            font-size: 15px;
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .newsletter-content {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            min-width: 250px;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            background: white;
+        }
+
+        .whatsapp {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            background: #25d366;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        .whatsapp:hover {
+            background: #1ead4f;
+            transform: scale(1.1);
+        }
+
+        .footer {
+            background: var(--primary);
+            color: white;
+            padding: 60px 20px 20px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .footer-section a:hover {
+            color: var(--secondary);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 25px;
+            font-size: 14px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            width: min(100%, 460px);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .modal-close {
+            border: 0;
+            background: transparent;
+            font-size: 32px;
+            line-height: 1;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        .modal-form {
+            display: grid;
+            gap: 14px;
+        }
+
+        .form-group-modal label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .form-group-modal input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        .form-options-modal {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 13px;
+        }
+
+        .btn-login-modal {
+            width: 100%;
+            padding: 14px 18px;
+            border: 0;
+            border-radius: 25px;
+            background: var(--primary);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .modal-divider {
+            margin: 16px 0;
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .modal-signup {
+            margin-top: 14px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .user-dropdown {
+            position: relative;
+        }
+
+        .user-btn {
+            border: 0;
+            background: transparent;
+            color: var(--primary);
+            font: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            min-width: 180px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+            border-radius: 12px;
+            overflow: hidden;
+            z-index: 20;
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 10px 14px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .dropdown-content a:hover {
+            background: #f7f3ef;
+        }
+
+        .dropdown-content hr {
+            border: 0;
+            border-top: 1px solid #eee;
+            margin: 6px 0;
+        }
+
+        .dropdown-content i {
+            margin-right: 8px;
+        }
+
+        .loader,
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .navbar .container {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .navbar-search {
+                max-width: 100%;
+                flex-basis: 100%;
+            }
+
+            .hero-slider {
+                min-height: 64vh;
+            }
+
+            .hero-control {
+                display: none;
+            }
+
+            .menu li a {
+                font-size: 10px;
+                padding: 12px 8px;
+            }
+
+            .top-bar .container,
+            .top-bar-left,
+            .top-bar-right {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-brand h1 {
+                font-size: 24px;
+            }
+
+            .hero-content {
+                padding-top: 44px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div th:replace="fragments/header :: header"></div>
-
-    <section class="hero" style="padding: 80px 0; background: linear-gradient(135deg, #111827, #1f2937); color: white;">
+    <div class="top-bar">
         <div class="container">
-            <h1 style="font-size: 3rem; margin-bottom: 16px;">FootStyle</h1>
-            <p style="font-size: 1.1rem; max-width: 700px;">Calzado y accesorios para hombre, mujer y niños. Explora nuestras categorías y ofertas destacadas.</p>
+            <div class="top-bar-left">
+                <span class="top-bar-item"><i class="fas fa-phone"></i> +51 949 259 138</span>
+                <span class="top-bar-item"><i class="fas fa-truck"></i> Envio gratis desde S/. 199</span>
+            </div>
+            <div class="top-bar-right">
+                <a class="top-bar-item" href="/contacto"><i class="fas fa-circle-question"></i> Ayuda</a>
+                <div class="user-menu" id="auth-guest-menu">
+                    <a class="top-bar-item" href="javascript:void(0)" onclick="openLoginModal()"><i class="fas fa-sign-in-alt"></i> Inicia Sesión</a>
+                </div>
+                <div class="user-menu" id="auth-user-menu" style="display:none;">
+                    <div class="user-dropdown">
+                        <button class="user-btn" type="button">
+                            <i class="fas fa-user-circle"></i>
+                            <span id="auth-user-name"></span>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="#"><i class="fas fa-cog"></i> Mi Perfil</a>
+                            <a href="/mis-pedidos"><i class="fas fa-box"></i> Mis Pedidos</a>
+                            <a href="#"><i class="fas fa-heart"></i> Favoritos</a>
+                            <a href="#"><i class="fas fa-cog"></i> Configuración</a>
+                            <hr>
+                            <a href="javascript:void(0)" onclick="window.logout && window.logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <a href="/"><h1>FootStyle</h1></a>
+            </div>
+
+            <div class="navbar-search">
+                <input type="text" placeholder="Buscar zapatos, accesorios...">
+                <button type="button"><i class="fas fa-search"></i></button>
+            </div>
+
+            <div class="navbar-actions">
+                <div class="action-item" title="Favoritos">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="action-item" th:if="${session.usuario == null}" onclick="openLoginModal()" title="Iniciar sesión" role="button" tabindex="0">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="action-item cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-bar">
+            <div class="container">
+                <ul class="menu" id="category-menu">
+                    <li><a href="/hombre">HOMBRE</a></li>
+                    <li><a href="/mujer">MUJER</a></li>
+                    <li><a href="/ninos">NIÑOS</a></li>
+                    <li><a href="/accesorios">ACCESORIOS</a></li>
+                    <li><a href="#ofertas">OFERTAS</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-slider" id="hero-slider" aria-label="Colecciones destacadas">
+        <div class="hero-track">
+            <article class="hero-slide active">
+                <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1400&auto=format&fit=crop" alt="Nueva colección de calzado urbano">
+                <div class="hero-content">
+                    <p class="hero-kicker">Nueva temporada</p>
+                    <h1>Diseño premium para cada paso del día</h1>
+                    <p>Descubre una selección curada de zapatillas y zapatos con estilo contemporáneo y máxima comodidad.</p>
+                    <div class="hero-actions">
+                        <a href="#categorias" class="btn btn-primary"><i class="fas fa-compass"></i> Explorar colección</a>
+                        <a href="#ofertas" class="btn btn-secondary">Ver ofertas</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="hero-slide">
+                <img src="https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?q=80&w=1400&auto=format&fit=crop" alt="Calzado formal para oficina y eventos">
+                <div class="hero-content">
+                    <p class="hero-kicker">Línea formal</p>
+                    <h1>Elegancia sobria para oficina y eventos</h1>
+                    <p>Modelos de cuero con acabados finos, pensados para elevar tu presencia sin sacrificar confort.</p>
+                    <div class="hero-actions">
+                        <a href="/hombre" class="btn btn-primary">Ver calzado formal</a>
+                        <a href="/mujer" class="btn btn-outline" style="color:#fff;border-color:#fff;">Línea mujer</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="hero-slide">
+                <img src="https://images.unsplash.com/photo-1511556670410-f35aa76f1f6d?q=80&w=1400&auto=format&fit=crop" alt="Accesorios y tendencias en moda">
+                <div class="hero-content">
+                    <p class="hero-kicker">Accesorios</p>
+                    <h1>Completa tu look con piezas clave</h1>
+                    <p>Desde bolsos hasta complementos esenciales, combina funcionalidad y estética en una sola compra.</p>
+                    <div class="hero-actions">
+                        <a href="/accesorios" class="btn btn-primary">Comprar accesorios</a>
+                        <a href="#featured" class="btn btn-secondary">Productos destacados</a>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <button type="button" class="hero-control prev" aria-label="Slide anterior"><i class="fas fa-chevron-left"></i></button>
+        <button type="button" class="hero-control next" aria-label="Siguiente slide"><i class="fas fa-chevron-right"></i></button>
+        <div class="hero-dots" aria-label="Indicadores de slide">
+            <button class="hero-dot active" type="button" aria-label="Ir al slide 1"></button>
+            <button class="hero-dot" type="button" aria-label="Ir al slide 2"></button>
+            <button class="hero-dot" type="button" aria-label="Ir al slide 3"></button>
         </div>
     </section>
 
-    <section class="categories-section" style="padding: 60px 0;">
+    <section class="categories" id="categorias">
         <div class="container">
-            <h2 style="margin-bottom: 24px;">Categorias</h2>
+            <h2>Encuentra tu Estilo</h2>
+            <div id="categories-loader" class="loader" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Cargando categorías...</div>
+            <div id="categories-empty" class="empty-state" style="display:none;"></div>
             <div class="categories-grid">
                 <div class="category-card" th:each="category : ${categories}">
                     <div class="category-image">
-                        <img th:src="${category.imageUrl}" th:alt="${category.name}" loading="lazy">
+                        <img th:src="${category.imageUrl != null ? category.imageUrl : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop'}" th:alt="${category.name}" loading="lazy">
                     </div>
                     <div class="category-info">
                         <h3 th:text="${category.name}">Categoria</h3>
                         <p th:text="${category.description}">Descripcion</p>
-                        <a th:href="@{/categoria(categoria=${category.id})}" class="btn btn-secondary">Ver Coleccion</a>
+                        <a th:href="@{/categoria(categoria=${category.name})}" class="btn btn-secondary">Ver Colección</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="products-section" style="padding: 60px 0; background: #f8fafc;">
+    <section class="offers" id="ofertas">
         <div class="container">
-            <h2 style="margin-bottom: 24px;">Productos destacados</h2>
+            <h2 class="offers-title">Ofertas especiales</h2>
+            <p class="offers-subtitle">Descuentos destacados en tus categorías favoritas</p>
+
+            <div class="categories-grid">
+                <div class="category-card" style="position: relative;">
+                    <div class="category-image" style="position: relative;">
+                        <img src="https://images.pexels.com/photos/3932499/pexels-photo-3932499.jpeg?w=400&h=400&fit=crop" alt="Oferta Hombre" style="width:100%;height:100%;object-fit:cover;">
+                        <div style="position:absolute;top:15px;right:15px;background:#FFD700;color:#333;padding:12px 20px;border-radius:8px;font-weight:bold;font-size:18px;box-shadow:0 4px 10px rgba(0,0,0,0.2);">-35%</div>
+                    </div>
+                    <div class="category-info" style="background: rgba(255,255,255,0.95);">
+                        <h3 style="color:#333;">Calzados Hombre</h3>
+                        <p style="color:#666;">Zapatos elegantes en oferta</p>
+                        <div class="offer-percent">Hasta 35% OFF</div>
+                        <a href="/hombre" class="btn btn-secondary">Ver Oferta</a>
+                    </div>
+                </div>
+
+                <div class="category-card" style="position: relative;">
+                    <div class="category-image" style="position: relative;">
+                        <img src="https://images.pexels.com/photos/3769714/pexels-photo-3769714.jpeg?w=400&h=400&fit=crop" alt="Oferta Mujer" style="width:100%;height:100%;object-fit:cover;">
+                        <div style="position:absolute;top:15px;right:15px;background:#FFD700;color:#333;padding:12px 20px;border-radius:8px;font-weight:bold;font-size:18px;box-shadow:0 4px 10px rgba(0,0,0,0.2);">-40%</div>
+                    </div>
+                    <div class="category-info" style="background: rgba(255,255,255,0.95);">
+                        <h3 style="color:#333;">Calzados Mujer</h3>
+                        <p style="color:#666;">Tacones y zapatos en promoción</p>
+                        <div class="offer-percent">Hasta 40% OFF</div>
+                        <a href="/mujer" class="btn btn-secondary">Ver Oferta</a>
+                    </div>
+                </div>
+
+                <div class="category-card" style="position: relative;">
+                    <div class="category-image" style="position: relative;">
+                        <img src="https://images.pexels.com/photos/4112021/pexels-photo-4112021.jpeg?w=400&h=400&fit=crop" alt="Oferta Niños" style="width:100%;height:100%;object-fit:cover;">
+                        <div style="position:absolute;top:15px;right:15px;background:#FFD700;color:#333;padding:12px 20px;border-radius:8px;font-weight:bold;font-size:18px;box-shadow:0 4px 10px rgba(0,0,0,0.2);">-30%</div>
+                    </div>
+                    <div class="category-info" style="background: rgba(255,255,255,0.95);">
+                        <h3 style="color:#333;">Calzados Niños</h3>
+                        <p style="color:#666;">Zapatos infantiles en descuento</p>
+                        <div class="offer-percent">Hasta 30% OFF</div>
+                        <a href="/ninos" class="btn btn-secondary">Ver Oferta</a>
+                    </div>
+                </div>
+
+                <div class="category-card" style="position: relative;">
+                    <div class="category-image" style="position: relative;">
+                        <img src="https://images.pexels.com/photos/2769274/pexels-photo-2769274.jpeg?w=400&h=400&fit=crop" alt="Oferta Accesorios" style="width:100%;height:100%;object-fit:cover;">
+                        <div style="position:absolute;top:15px;right:15px;background:#FFD700;color:#333;padding:12px 20px;border-radius:8px;font-weight:bold;font-size:18px;box-shadow:0 4px 10px rgba(0,0,0,0.2);">-25%</div>
+                    </div>
+                    <div class="category-info" style="background: rgba(255,255,255,0.95);">
+                        <h3 style="color:#333;">Accesorios</h3>
+                        <p style="color:#666;">Complementos con grandes descuentos</p>
+                        <div class="offer-percent">Hasta 25% OFF</div>
+                        <a href="/accesorios" class="btn btn-secondary">Ver Oferta</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="featured" id="featured">
+        <div class="container">
+            <div class="section-header">
+                <h2>Productos Destacados</h2>
+                <p class="section-subtitle">Descubre nuestras selecciones premium</p>
+            </div>
+            <div id="products-loader" class="loader" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Cargando productos...</div>
+            <div id="products-empty" class="empty-state" style="display:none;"></div>
             <div class="products-grid">
                 <div class="product-card" th:each="product : ${featuredProducts}">
                     <div class="product-image">
-                        <img th:src="${product.imageUrl}" th:alt="${product.name}" loading="lazy">
+                        <img th:src="${product.imageUrl != null ? product.imageUrl : 'https://images.unsplash.com/photo-1507222405253-b8ff5d6c0937?w=400&h=400&fit=crop'}" th:alt="${product.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+                        <div class="product-overlay">
+                            <a class="btn-icon" th:href="@{/producto(id=${product.id})}">
+                                <i class="fas fa-eye"></i> Ver detalles
+                            </a>
+                        </div>
                     </div>
                     <div class="product-info">
-                        <h4 th:text="${product.name}">Producto</h4>
-                        <p th:text="${product.description}">Descripcion</p>
-                        <p class="product-price" th:text="'S/. ' + ${#numbers.formatDecimal(product.price, 1, 2)}">S/. 0.00</p>
-                        <a th:href="@{/producto(id=${product.id})}" class="btn btn-outline">Ver detalle</a>
+                        <h4 class="product-name" th:text="${product.name}">Producto</h4>
+                        <p class="product-category" th:text="${product.category != null ? product.category : 'Categoría'}">Categoría</p>
+                        <div class="rating">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                            <span th:text="'(' + ${product.reviews != null ? product.reviews : 0} + ')'">(0)</span>
+                        </div>
+                        <div class="product-prices">
+                            <span class="price-original" th:if="${product.discount > 0}" th:text="'S/. ' + ${#numbers.formatDecimal(product.price / (1 - (product.discount / 100.0)), 1, 2)}">S/. 0.00</span>
+                            <span class="product-price" th:text="'S/. ' + ${#numbers.formatDecimal(product.price, 1, 2)}">S/. 0.00</span>
+                        </div>
+                        <a class="btn btn-outline" th:href="@{/producto(id=${product.id})}">
+                            <i class="fas fa-shopping-cart"></i> Ver detalle
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <div th:replace="fragments/footer :: footer"></div>
+    <section class="benefits">
+        <div class="container">
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-lock"></i></div>
+                    <h3>Compra Segura</h3>
+                    <p>Pagos cifrados y seguros con múltiples opciones de pago disponibles</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-exchange-alt"></i></div>
+                    <h3>Devoluciones Fáciles</h3>
+                    <p>30 días para devolver si no te satisface, sin preguntas adicionales</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-headset"></i></div>
+                    <h3>Soporte 24/7</h3>
+                    <p>Atención personalizada disponible todos los días por chat y WhatsApp</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>Lo que dicen nuestros clientes</h2>
+                <p class="section-subtitle">Satisfacción garantizada en cada compra</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="testimonial-text">"Excelente calidad y muy rápido el envío. Los zapatos vinieron en perfectas condiciones y se adaptan perfectamente. Recomiendo FootStyle sin dudarlo."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);"><i class="fas fa-user"></i></div>
+                        <div>
+                            <h4>María García</h4>
+                            <p>Lima, Perú</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="testimonial-text">"Variedad increíble y precios competitivos. El proceso de compra fue muy fácil y el chat de soporte fue muy atento a mis dudas. Volveré a comprar."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background: linear-gradient(135deg, #f093fb, #f5576c);"><i class="fas fa-user"></i></div>
+                        <div>
+                            <h4>Carlos Rodríguez</h4>
+                            <p>Arequipa, Perú</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="testimonial-text">"Llevaba buscando estos zapatos formales por toda la ciudad. FootStyle tenía el diseño exacto que quería. Servicio impecable de principio a fin."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"><i class="fas fa-user"></i></div>
+                        <div>
+                            <h4>Patricia Flores</h4>
+                            <p>Cusco, Perú</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-content">
+                <div class="newsletter-text">
+                    <h2>Suscríbete a nuestro Newsletter</h2>
+                    <p>Recibe ofertas exclusivas, nuevos diseños y consejos de estilo directamente en tu correo</p>
+                </div>
+                <form class="newsletter-form" id="newsletterForm">
+                    <input type="email" placeholder="Tu correo electrónico" required>
+                    <button type="submit" class="btn btn-secondary"><i class="fas fa-paper-plane"></i> Suscribirse</button>
+                </form>
+                <div id="newsletter-message" style="text-align:center;margin-top:15px;display:none;font-size:14px;"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>Sobre FootStyle</h4>
+                    <p>Somos tu destino ideal para encontrar calzado de calidad con las últimas tendencias del mercado.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Categorías</h4>
+                    <a href="/hombre">Calzados Hombre</a>
+                    <a href="/mujer">Calzados Mujer</a>
+                    <a href="/ninos">Calzados Niños</a>
+                    <a href="/accesorios">Accesorios</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Información</h4>
+                    <a href="#">Envíos</a>
+                    <a href="#">Devoluciones</a>
+                    <a href="#">Términos y Condiciones</a>
+                    <a href="#">Privacidad</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <p><strong>Teléfono:</strong> +51 949 259 138</p>
+                    <p><strong>Email:</strong> info@footstyle.com</p>
+                    <p><strong>Horario:</strong> Lun - Dom 9:00 AM - 9:00 PM</p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 FootStyle. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/51949259138" class="whatsapp" target="_blank" title="Contactar por WhatsApp" rel="noreferrer">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Inicia Sesión</h2>
+                <button class="modal-close" type="button" onclick="closeLoginModal()">&times;</button>
+            </div>
+            <form id="modalLoginForm" class="modal-form">
+                <div class="form-group-modal">
+                    <label for="modalEmail">Correo Electrónico</label>
+                    <input type="email" id="modalEmail" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group-modal">
+                    <label for="modalPassword">Contraseña</label>
+                    <input type="password" id="modalPassword" placeholder="••••••••" required>
+                </div>
+                <div class="form-options-modal">
+                    <label><input type="checkbox" name="remember"> Recuérdame</label>
+                    <a href="#">¿Olvidaste tu contraseña?</a>
+                </div>
+                <button type="submit" id="modalLoginBtn" class="btn-login-modal">Inicia Sesión</button>
+            </form>
+            <div class="modal-divider">O continúa con</div>
+            <div style="display:flex;gap:10px;">
+                <button style="flex:1;padding:10px;border:1px solid #ddd;border-radius:6px;background:white;cursor:pointer;color:#666;font-size:13px;transition:all 0.3s;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='white'">
+                    <i class="fab fa-google"></i> Google
+                </button>
+                <button style="flex:1;padding:10px;border:1px solid #ddd;border-radius:6px;background:white;cursor:pointer;color:#666;font-size:13px;transition:all 0.3s;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='white'">
+                    <i class="fab fa-facebook"></i> Facebook
+                </button>
+            </div>
+            <div class="modal-signup">
+                ¿No tienes cuenta? <a href="/register">Regístrate</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.FOOTSTYLE_STATIC_MODE = false;
+    </script>
+    <script th:src="@{/js/menu.js}"></script>
+    <script th:src="@{/js/auth-integration.js}"></script>
+    <script th:src="@{/js/modal.js}"></script>
+    <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/cart.js}"></script>
+    <script>
+        (function () {
+            function updateAuthMenu() {
+                const guestMenu = document.getElementById('auth-guest-menu');
+                const userMenu = document.getElementById('auth-user-menu');
+                const userName = document.getElementById('auth-user-name');
+                const rawUser = sessionStorage.getItem('user');
+                const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
+
+                if (!guestMenu || !userMenu) {
+                    return;
+                }
+
+                if (rawUser && isLoggedIn) {
+                    const user = JSON.parse(rawUser);
+                    guestMenu.style.display = 'none';
+                    userMenu.style.display = 'flex';
+                    if (userName) {
+                        userName.textContent = user.firstName || user.email || 'Usuario';
+                    }
+                    return;
+                }
+
+                guestMenu.style.display = 'flex';
+                userMenu.style.display = 'none';
+            }
+
+            document.addEventListener('DOMContentLoaded', updateAuthMenu);
+            window.addEventListener('storage', updateAuthMenu);
+            window.renderAuthHeader = updateAuthMenu;
+        })();
+    </script>
+    <script>
+        (function () {
+            const slider = document.getElementById('hero-slider');
+            if (!slider) return;
+
+            const slides = Array.from(slider.querySelectorAll('.hero-slide'));
+            const dots = Array.from(slider.querySelectorAll('.hero-dot'));
+            const prevBtn = slider.querySelector('.hero-control.prev');
+            const nextBtn = slider.querySelector('.hero-control.next');
+            const supportsReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            let index = 0;
+            let autoplayId;
+            let touchStartX = 0;
+
+            if (slides.length === 0) return;
+
+            function setSlide(newIndex) {
+                index = (newIndex + slides.length) % slides.length;
+                slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+                dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+            }
+
+            function startAutoplay() {
+                if (supportsReducedMotion || slides.length <= 1) return;
+                stopAutoplay();
+                autoplayId = window.setInterval(() => setSlide(index + 1), 5500);
+            }
+
+            function stopAutoplay() {
+                if (autoplayId) {
+                    window.clearInterval(autoplayId);
+                    autoplayId = null;
+                }
+            }
+
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    setSlide(index - 1);
+                    startAutoplay();
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    setSlide(index + 1);
+                    startAutoplay();
+                });
+            }
+
+            dots.forEach((dot, i) => {
+                dot.addEventListener('click', () => {
+                    setSlide(i);
+                    startAutoplay();
+                });
+            });
+
+            slider.addEventListener('keydown', (event) => {
+                if (event.key === 'ArrowLeft') {
+                    setSlide(index - 1);
+                    startAutoplay();
+                }
+                if (event.key === 'ArrowRight') {
+                    setSlide(index + 1);
+                    startAutoplay();
+                }
+            });
+
+            slider.addEventListener('touchstart', (event) => {
+                touchStartX = event.changedTouches[0].clientX;
+            }, { passive: true });
+
+            slider.addEventListener('touchend', (event) => {
+                const delta = event.changedTouches[0].clientX - touchStartX;
+                if (Math.abs(delta) < 40) return;
+                if (delta > 0) setSlide(index - 1);
+                if (delta < 0) setSlide(index + 1);
+                startAutoplay();
+            }, { passive: true });
+
+            slider.addEventListener('mouseenter', stopAutoplay);
+            slider.addEventListener('mouseleave', startAutoplay);
+            slider.addEventListener('focusin', stopAutoplay);
+            slider.addEventListener('focusout', startAutoplay);
+
+            setSlide(0);
+            startAutoplay();
+        })();
+
+        (function () {
+            const newsletterForm = document.getElementById('newsletterForm');
+            const newsletterMessage = document.getElementById('newsletter-message');
+
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    try {
+                        if (newsletterMessage) {
+                            newsletterMessage.style.display = 'block';
+                            newsletterMessage.style.color = 'var(--secondary)';
+                            newsletterMessage.textContent = '✓ ¡Suscripción exitosa! Revisa tu correo.';
+                        }
+                        newsletterForm.reset();
+
+                        setTimeout(() => {
+                            if (newsletterMessage) {
+                                newsletterMessage.style.display = 'none';
+                            }
+                        }, 4000);
+                    } catch (error) {
+                        if (newsletterMessage) {
+                            newsletterMessage.style.display = 'block';
+                            newsletterMessage.style.color = '#ff6b6b';
+                            newsletterMessage.textContent = 'Error al suscribirse. Intenta nuevamente.';
+                        }
+                    }
+                });
+            }
+        })();
+    </script>
 </body>
 </html>

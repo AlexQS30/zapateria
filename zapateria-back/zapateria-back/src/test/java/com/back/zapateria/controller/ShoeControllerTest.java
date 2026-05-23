@@ -1,6 +1,7 @@
 package com.back.zapateria.controller;
 
 import com.back.zapateria.model.Product;
+import com.back.zapateria.model.ProductVariant;
 import com.back.zapateria.service.ShoeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -80,6 +82,20 @@ class ShoeControllerTest {
     }
 
     @Test
+    void byCategoryId_returnsProductsForCategoryId() {
+        when(shoeService.getProductsByCategoryId(1L)).thenReturn(List.of(
+            new Product("1", "HombresShoe1", 100.0, "/i1", "Hombre", false, 5, 0, 4.5)
+        ));
+
+        ResponseEntity<List<Product>> resp = controller.byCategoryId(1L);
+
+        assertEquals(200, resp.getStatusCode().value());
+        assertNotNull(resp.getBody());
+        assertEquals(1, resp.getBody().size());
+        verify(shoeService).getProductsByCategoryId(1L);
+    }
+
+    @Test
     void getOne_foundAndNotFound() {
         Product p = new Product("1", "Found", 1.0, "/i", "hombre", false, 3, 0, 0.0);
         when(shoeService.getProductDetail("1")).thenReturn(p);
@@ -101,6 +117,31 @@ class ShoeControllerTest {
         ResponseEntity<Product> resp = controller.create(p);
         assertEquals(201, resp.getStatusCode().value());
         assertEquals(created, resp.getBody());
+    }
+
+    @Test
+    void variants_and_availability_returnExpectedPayload() {
+        Product product = new Product("1", "Found", 1.0, "/i", "hombre", false, 3, 0, 0.0);
+        ProductVariant variant = new ProductVariant(product, "39", "Negro", 2);
+
+        when(shoeService.getProductVariants("1")).thenReturn(List.of(variant));
+        when(shoeService.getAvailability("1")).thenReturn(Map.of(
+                "productId", "1",
+                "stock", 3,
+                "hasStock", true,
+                "variants", List.of(variant)
+        ));
+
+        ResponseEntity<List<ProductVariant>> variantsResp = controller.variants("1");
+        ResponseEntity<Map<String, Object>> availabilityResp = controller.availability("1");
+
+        assertEquals(200, variantsResp.getStatusCode().value());
+        assertEquals(1, variantsResp.getBody().size());
+        assertEquals("39", variantsResp.getBody().get(0).getSize());
+
+        assertEquals(200, availabilityResp.getStatusCode().value());
+        assertEquals("1", availabilityResp.getBody().get("productId"));
+        assertEquals(true, availabilityResp.getBody().get("hasStock"));
     }
 
     @Test

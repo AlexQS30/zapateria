@@ -38,4 +38,8 @@ public class Review {
     public int getRating() { return rating; }
     public String getComment() { return comment; }
     public Instant getCreatedAt() { return createdAt; }
+    public void setProduct(Product product) { this.product = product; }
+    public void setUserId(String userId) { this.userId = userId; }
+    public void setRating(int rating) { this.rating = rating; }
+    public void setComment(String comment) { this.comment = comment; }
 }

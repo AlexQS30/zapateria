@@ -116,18 +116,7 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-// Add to cart functionality
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM Loaded - configurando botones');
-    document.querySelectorAll('.btn-outline').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const cart = document.querySelector('.action-item:last-child .badge');
-            if (cart) {
-                cart.textContent = parseInt(cart.textContent) + 1;
-            }
-        });
-    });
-    
     // Configurar el formulario del modal de login si existe
     const loginForm = document.getElementById('modalLoginForm');
     if (loginForm) {

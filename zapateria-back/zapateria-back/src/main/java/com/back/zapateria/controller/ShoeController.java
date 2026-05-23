@@ -1,6 +1,7 @@
 package com.back.zapateria.controller;
 
 import com.back.zapateria.model.Product;
+import com.back.zapateria.model.ProductVariant;
 import com.back.zapateria.service.ShoeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/shoes")
@@ -55,6 +57,18 @@ public class ShoeController {
     public ResponseEntity<Product> getOne(@PathVariable String id) {
         Product p = shoeService.getProductDetail(id);
         return p != null ? ResponseEntity.ok(p) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{id}/variants")
+    @Operation(summary = "Listar variantes", description = "Retorna las variantes de talla, color y stock de un producto")
+    public ResponseEntity<List<ProductVariant>> variants(@PathVariable String id) {
+        return ResponseEntity.ok(shoeService.getProductVariants(id));
+    }
+
+    @GetMapping("/{id}/availability")
+    @Operation(summary = "Disponibilidad del producto", description = "Retorna stock total y variantes disponibles")
+    public ResponseEntity<Map<String, Object>> availability(@PathVariable String id) {
+        return ResponseEntity.ok(shoeService.getAvailability(id));
     }
 
     @PostMapping

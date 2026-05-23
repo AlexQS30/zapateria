@@ -6,6 +6,38 @@
 <body>
     <header th:fragment="header">
         <!-- Top Bar -->
+    <script>
+        (function () {
+            function updateAuthMenu() {
+                const guestMenu = document.getElementById('auth-guest-menu');
+                const userMenu = document.getElementById('auth-user-menu');
+                const userName = document.getElementById('auth-user-name');
+                const rawUser = sessionStorage.getItem('user');
+                const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
+
+                if (!guestMenu || !userMenu) {
+                    return;
+                }
+
+                if (rawUser && isLoggedIn) {
+                    const user = JSON.parse(rawUser);
+                    guestMenu.style.display = 'none';
+                    userMenu.style.display = 'flex';
+                    if (userName) {
+                        userName.textContent = user.firstName || user.email || 'Usuario';
+                    }
+                    return;
+                }
+
+                guestMenu.style.display = 'flex';
+                userMenu.style.display = 'none';
+            }
+
+            document.addEventListener('DOMContentLoaded', updateAuthMenu);
+            window.addEventListener('storage', updateAuthMenu);
+            window.renderAuthHeader = updateAuthMenu;
+        })();
+    </script>
         <div class="top-bar">
             <div class="container">
                 <div class="top-bar-left">
@@ -14,21 +46,21 @@
                 </div>
                 <div class="top-bar-right">
                     <a href="/contacto"><i class="fas fa-question-circle"></i> Ayuda</a>
-                    <div class="user-menu" th:if="${session.usuario == null}">
+                    <div class="user-menu" id="auth-guest-menu">
                         <a href="javascript:void(0)" onclick="openLoginModal()"><i class="fas fa-sign-in-alt"></i> Inicia Sesión</a>
                     </div>
-                    <div class="user-menu" th:if="${session.usuario != null}">
+                    <div class="user-menu" id="auth-user-menu" style="display:none;">
                         <div class="user-dropdown">
-                            <button class="user-btn">
-                                <i class="fas fa-user-circle"></i> <span th:text="${session.usuario}"></span>
+                            <button class="user-btn" type="button">
+                                <i class="fas fa-user-circle"></i> <span id="auth-user-name"></span>
                             </button>
                             <div class="dropdown-content">
                                 <a href="#"><i class="fas fa-cog"></i> Mi Perfil</a>
-                                <a href="#"><i class="fas fa-box"></i> Mis Pedidos</a>
+                                <a href="/mis-pedidos"><i class="fas fa-box"></i> Mis Pedidos</a>
                                 <a href="#"><i class="fas fa-heart"></i> Favoritos</a>
                                 <a href="#"><i class="fas fa-cog"></i> Configuración</a>
                                 <hr>
-                                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                                <a href="javascript:void(0)" onclick="window.logout && window.logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
                             </div>
                         </div>
                     </div>
@@ -80,3 +112,4 @@
     </header>
 
     <script th:src="@{/js/menu.js}"></script>
+    <script th:src="@{/js/cart.js}"></script>

@@ -51,6 +51,7 @@ public class SecurityConfig {
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(authz -> authz
                 // Public endpoints
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs", "/webjars/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/auth/check-email/**").permitAll()
@@ -68,6 +69,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/shoes/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/shoes/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/purchases/me", "/api/purchases/me/**").authenticated()
+                .requestMatchers(HttpMethod.PATCH, "/api/purchases/*/status").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/purchases/*/create").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/purchases/*").hasRole("ADMIN")
                 // any other request requires authentication
                 .anyRequest().authenticated()
             )

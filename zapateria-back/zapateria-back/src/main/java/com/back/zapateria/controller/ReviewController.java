@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.security.Principal;
+
+import com.back.zapateria.dto.PurchaseStatusUpdateRequest;
 
 @RestController
 @RequestMapping("/api/products/{productId}/reviews")
@@ -27,11 +30,17 @@ public class ReviewController {
 
     @PostMapping
     @Operation(summary = "Crear reseña", description = "Crea una reseña para un producto validando la compra previa")
-    public ResponseEntity<Review> create(@PathVariable String productId,
-                                         @RequestParam String userId,
+    public ResponseEntity<Review> create(Principal principal,
+                                         @PathVariable String productId,
                                          @RequestParam int rating,
                                          @RequestParam(required = false) String comment) {
-        Review r = reviewService.createReview(userId, productId, rating, comment);
+        Review r = reviewService.createReview(principal.getName(), productId, rating, comment);
         return ResponseEntity.status(201).body(r);
+    }
+
+    @GetMapping("/me")
+    @Operation(summary = "Listar reseñas del usuario autenticado", description = "Retorna las reseñas creadas por el usuario autenticado")
+    public ResponseEntity<List<Review>> myReviews(Principal principal) {
+        return ResponseEntity.ok(reviewService.listByUser(principal.getName()));
     }
 }
