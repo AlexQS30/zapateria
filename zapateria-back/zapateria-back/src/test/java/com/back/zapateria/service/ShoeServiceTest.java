@@ -3,6 +3,7 @@ package com.back.zapateria.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -52,6 +53,22 @@ class ShoeServiceTest {
         seeded.addVariant(seededVariant);
         store.add(seeded);
         variantStore.add(seededVariant);
+
+        Category mujer = new Category("Mujer");
+        mujer.setId(2L);
+        Category nino = new Category("Nino");
+        nino.setId(3L);
+
+        when(categoryService.getById(1L)).thenReturn(Optional.of(hombre));
+        when(categoryService.getById(2L)).thenReturn(Optional.of(mujer));
+        when(categoryService.getById(3L)).thenReturn(Optional.of(nino));
+        when(categoryService.getById(999L)).thenReturn(Optional.empty());
+        when(categoryService.getOrCreateByName(anyString())).thenAnswer(invocation -> {
+            String name = invocation.getArgument(0);
+            Category category = new Category(name);
+            category.setId(100L + store.size());
+            return category;
+        });
 
         when(productRepository.findAll()).thenAnswer(invocation -> new ArrayList<>(store));
         when(productRepository.findById(anyString())).thenAnswer(invocation -> {
@@ -201,5 +218,31 @@ class ShoeServiceTest {
     void backwardCompatibleConstructor_handlesMissingVariantRepository() {
         ShoeService legacyService = new ShoeService(productRepository, categoryService);
         assertTrue(legacyService.getProductVariants("1").isEmpty());
+    }
+
+    @Test
+    void createProduct_resolvesAndPersistsCategoryById() {
+        Product input = new Product(null, "Con categoria", 15.0, "/c.png", (Category) null, false, 3, 0, 4.0);
+        input.setCategoryId(2L);
+
+        Product created = service.createProduct(input);
+
+        assertNotNull(created.getCategory());
+        assertEquals(2L, created.getCategoryId());
+        assertEquals("Mujer", created.getCategory().getName());
+    }
+
+    @Test
+    void updateProduct_changesCategoryById() {
+        Product existing = service.createProduct(new Product(null, "Cambiar categoria", 20.0, "/p.png", "Hombre", false, 2, 0, 4.0));
+
+        Product update = new Product(null, "Cambiar categoria", 20.0, "/p.png", (Category) null, false, 2, 0, 4.0);
+        update.setCategoryId(3L);
+
+        Product result = service.updateProduct(existing.getId(), update);
+
+        assertNotNull(result);
+        assertEquals(3L, result.getCategoryId());
+        assertEquals("Nino", result.getCategory().getName());
     }
 }

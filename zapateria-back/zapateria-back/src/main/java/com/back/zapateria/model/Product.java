@@ -1,13 +1,22 @@
 package com.back.zapateria.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 
 @Entity
 public class Product implements Serializable {
@@ -21,7 +30,6 @@ public class Product implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @JsonIgnore
     private Category category;
 
     private int stock;
@@ -61,6 +69,7 @@ public class Product implements Serializable {
     public String getName() { return name; }
     public double getPrice() { return price; }
     public String getImage() { return image; }
+    @JsonIgnore
     public Category getCategory() { return category; }
     public boolean isNew() { return isNew; }
     public int getStock() { return stock; }
@@ -91,6 +100,7 @@ public class Product implements Serializable {
     public void setName(String name) { this.name = name; }
     public void setPrice(double price) { this.price = price; }
     public void setImage(String image) { this.image = image; }
+    @JsonProperty("category")
     public void setCategory(Category category) { this.category = category; }
 
     @JsonProperty("categoryId")
@@ -98,6 +108,18 @@ public class Product implements Serializable {
     public Long getCategoryId() {
         return category != null ? category.getId() : null;
     }
+
+    @JsonProperty("categoryId")
+    public void setCategoryId(Long categoryId) {
+        if (categoryId == null) {
+            return;
+        }
+        if (this.category == null) {
+            this.category = new Category();
+        }
+        this.category.setId(categoryId);
+    }
+
     public void setStock(int stock) { this.stock = stock; }
     public void setNew(boolean aNew) { isNew = aNew; }
     public void setDiscount(int discount) { this.discount = discount; }

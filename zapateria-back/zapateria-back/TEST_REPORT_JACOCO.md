@@ -1,150 +1,110 @@
-# Reporte de Tests y Swagger
+# Reporte de Tests y JaCoCo
 
 ## Resumen
 
 - Proyecto: zapateria-back
-- Fecha de ejecucion: 2026-04-20
+- Fecha de ejecucion: 2026-05-23
 - Java: 21
 - Spring Boot: 4.0.5
-- Ejecucion usada: mvnw.cmd clean test jacoco:report
+- Ejecucion usada: run-mvn-jdk21.bat (clean test jacoco:report)
 
 ## Resultado global de pruebas
 
-- Total de pruebas: 38
-- Exitosas: 38
+- Total de pruebas: 92
+- Exitosas: 92
 - Fallidas: 0
 - Con error: 0
 - Omitidas: 0
 - Tasa de exito: 100%
 
-Fuente:
+Fuentes:
 - target/surefire-reports/TEST-*.xml
+- salida Maven de la ultima ejecucion
 
-## Cantidad de pruebas por suite
+## Suites ejecutadas
 
 | Suite | Cantidad | Estado |
 |---|---:|---|
-| com.back.zapateria.service.LoginServiceTest | 11 | PASS |
-| com.back.zapateria.service.CategoryServiceTest | 5 | PASS |
+| com.back.zapateria.config.JwtAuthenticationFilterTest | 4 | PASS |
+| com.back.zapateria.controller.CartControllerTest | 4 | PASS |
+| com.back.zapateria.controller.CategoryControllerTest | 4 | PASS |
+| com.back.zapateria.controller.LoginControllerTest | 8 | PASS |
+| com.back.zapateria.controller.PurchaseControllerTest | 8 | PASS |
+| com.back.zapateria.controller.ReviewControllerTest | 3 | PASS |
+| com.back.zapateria.controller.ShoeControllerTest | 9 | PASS |
+| com.back.zapateria.model.ProductPhotoTest | 3 | PASS |
+| com.back.zapateria.model.ProductTest | 4 | PASS |
 | com.back.zapateria.service.CartServiceTest | 2 | PASS |
-| com.back.zapateria.service.PurchaseServiceTest | 2 | PASS |
+| com.back.zapateria.service.CategoryServiceTest | 5 | PASS |
+| com.back.zapateria.service.JwtServiceTest | 4 | PASS |
+| com.back.zapateria.service.LoginServiceTest | 11 | PASS |
+| com.back.zapateria.service.PurchaseServiceTest | 9 | PASS |
 | com.back.zapateria.service.ReviewServiceTest | 3 | PASS |
-| com.back.zapateria.service.ShoeServiceTest | 7 | PASS |
-| com.back.zapateria.controller.ShoeControllerTest | 7 | PASS |
+| com.back.zapateria.service.ShoeServiceTest | 10 | PASS |
 | com.back.zapateria.ZapateriaBackApplicationTests | 1 | PASS |
 
-## Casos de prueba de servicios (30)
+## Nuevas pruebas agregadas en esta iteracion
 
-### LoginServiceTest (11)
+### JWT y seguridad
 
-Archivo: src/test/java/com/back/zapateria/service/LoginServiceTest.java
+- src/test/java/com/back/zapateria/service/JwtServiceTest.java
+	- generateToken_and_extractClaims_successfully
+	- extractUserId_handlesStringUidClaim
+	- extractRole_returnsNull_whenRoleIsMissing
+	- isTokenValid_returnsFalse_whenTokenExpired
 
-1. authenticate_success: autentica un usuario activo con credenciales validas.
-2. authenticate_userNotFound: rechaza login cuando el email no existe.
-3. authenticate_wrongPassword: rechaza login por password incorrecto.
-4. authenticate_inactiveUser: bloquea login de usuario inactivo.
-5. register_success: registra usuario nuevo con datos completos.
-6. register_emailAlreadyExists: evita registro con email duplicado.
-7. getAllUsers_returnsOnlyActiveUsers: lista solo usuarios activos.
-8. updateUser_changesFields: actualiza datos principales del usuario.
-9. deleteUser_marksInactive: aplica borrado logico (inactivo).
-10. emailExists_returnsTrueForExistingEmail: confirma email existente.
-11. emailExists_returnsFalseForMissingEmail: confirma email no existente.
+- src/test/java/com/back/zapateria/config/JwtAuthenticationFilterTest.java
+	- shouldNotFilter_returnsTrue_withoutBearerHeader
+	- doFilterInternal_setsAuthentication_whenTokenIsValid
+	- doFilterInternal_setsAuthenticationWithNoAuthorities_whenRoleIsNull
+	- doFilterInternal_clearsContext_whenJwtServiceThrows
 
-### CategoryServiceTest (5)
+### Modelos
 
-Archivo: src/test/java/com/back/zapateria/service/CategoryServiceTest.java
+- src/test/java/com/back/zapateria/model/ProductTest.java
+	- getGallery_mergesImageAndPhotos_distinctAndTrimmed
+	- variantMethods_setBackReference_andManageCollection
+	- photoMethods_setBackReference_andManageCollection
+	- categoryId_returnsNullWithoutCategory_andValueWithCategory
 
-1. getAll_returnsList: devuelve categorias del repositorio.
-2. getByName_findsCategoryIgnoringCase: busca por nombre sin importar mayusculas.
-3. getOrCreateByName_returnsExistingCategory: reutiliza categoria existente.
-4. getOrCreateByName_createsNewCategory: crea categoria cuando no existe.
-5. delete_removesCategory: elimina categoria por id.
-
-### CartServiceTest (2)
-
-Archivo: src/test/java/com/back/zapateria/service/CartServiceTest.java
-
-1. add_get_clear_cart_behaviour: agrega, consulta, quita y limpia carrito.
-2. addToCart_accumulatesQuantityForSameProduct: acumula cantidad del mismo producto.
-
-### PurchaseServiceTest (2)
-
-Archivo: src/test/java/com/back/zapateria/service/PurchaseServiceTest.java
-
-1. createPurchase_persists_whenReposPresent: crea compra con items validados en repositorio.
-2. listByUser_returnsRepositoryResults: lista compras por usuario.
-
-### ReviewServiceTest (3)
-
-Archivo: src/test/java/com/back/zapateria/service/ReviewServiceTest.java
-
-1. createReview_requiresPurchase: permite reseña solo si hubo compra previa.
-2. listByProduct_returnsRepositoryReviews: lista reseñas por producto.
-3. createReview_throwsWhenUserDidNotPurchase: lanza error si no hay compra previa.
-
-### ShoeServiceTest (7)
-
-Archivo: src/test/java/com/back/zapateria/service/ShoeServiceTest.java
-
-1. getAllProducts_notEmpty: lista productos disponibles.
-2. createProduct_assignsId: crea producto y asigna id.
-3. updateProduct_changesFields: actualiza campos de producto.
-4. deleteProduct_removes: elimina producto existente.
-5. searchByName_finds: busca por nombre.
-6. getProductsByCategoryId_filtersByCategoryId: filtra productos por categoryId.
-7. getProductsByCategoryId_returnsEmptyWhenNoMatch: responde vacio cuando no hay coincidencia.
+- src/test/java/com/back/zapateria/model/ProductPhotoTest.java
+	- constructor_initializesFields
+	- setters_and_getters_workForAllFields
+	- defaultConstructor_keepsNullableFieldsNull
 
 ## Cobertura JaCoCo
 
-Fuente:
+Fuentes:
 - target/site/jacoco/jacoco.csv
 - target/site/jacoco/index.html
 
 ### Cobertura global
 
-- Instrucciones (total proyecto): 76.88%
-- Ramas (total proyecto): 52.56%
+- Instrucciones: 86.08% (2807/3261)
+- Ramas: 61.06% (127/208)
 
 ### Cobertura del paquete de servicios
 
-- Instrucciones (com.back.zapateria.service): 92.53%
-- Ramas (com.back.zapateria.service): 58.00%
+- Instrucciones: 87.82% (1175/1338)
+- Ramas: 57.43% (85/148)
 
-### Detalle por servicio
+### Mejora puntual en clases objetivo de esta iteracion
 
 | Clase | Cobertura instrucciones | Cobertura ramas |
 |---|---:|---:|
-| CartService | 100.00% | 50.00% |
-| LoginService | 96.97% | 75.00% |
-| PurchaseService | 94.59% | 60.00% |
-| ReviewService | 93.22% | 60.00% |
-| CategoryService | 87.23% | N/A |
-| ShoeService | 80.60% | 33.33% |
-
-## Swagger/OpenAPI de servicios
-
-Se agrego documentacion OpenAPI con Springdoc y anotaciones por controlador.
-
-Cambios principales:
-- Dependencia springdoc-openapi-starter-webmvc-ui en pom.xml
-- Configuracion de metadata en src/main/java/com/back/zapateria/config/OpenApiConfig.java
-- Permisos de seguridad para Swagger en src/main/java/com/back/zapateria/config/SecurityConfig.java
-- Tags y operaciones documentadas en controladores de autenticacion, productos, categorias, carrito, compras y reseñas
-
-### URLs
-
-- Swagger UI: http://localhost:8081/swagger-ui/index.html
-- OpenAPI JSON: http://localhost:8081/v3/api-docs
+| JwtService | 97.90% (140/143) | 66.67% (8/12) |
+| JwtAuthenticationFilter | 98.75% (79/80) | 70.00% (7/10) |
+| Product | 94.80% (237/250) | 75.00% (15/20) |
+| ProductPhoto | 100.00% (43/43) | N/A |
 
 ## Como ejecutar
 
 ```bash
 cd zapateria-back/zapateria-back
-mvnw.cmd clean test jacoco:report
+run-mvn-jdk21.bat
 ```
 
-Abrir reporte HTML de cobertura:
+Abrir reporte HTML:
 
 ```text
 target/site/jacoco/index.html

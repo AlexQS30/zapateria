@@ -1,18 +1,18 @@
 package com.back.zapateria.service;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.back.zapateria.model.Category;
 import com.back.zapateria.model.Product;
 import com.back.zapateria.model.ProductVariant;
 import com.back.zapateria.repository.ProductRepository;
 import com.back.zapateria.repository.ProductVariantRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class ShoeService {
@@ -77,6 +77,7 @@ public class ShoeService {
 
         // 🔹 crear
         public Product createProduct(Product product) {
+                product.setCategory(resolveCategory(product.getCategory(), null));
                 return productRepository.save(product);
         }
 
@@ -86,7 +87,7 @@ public class ShoeService {
                         existing.setName(update.getName());
                         existing.setPrice(update.getPrice());
                         existing.setImage(update.getImage());
-                        existing.setCategory(update.getCategory());
+                        existing.setCategory(resolveCategory(update.getCategory(), existing.getCategory()));
                         existing.setStock(update.getStock());
                         existing.setNew(update.isNew());
                         existing.setDiscount(update.getDiscount());
@@ -120,5 +121,21 @@ public class ShoeService {
                         return new ArrayList<>();
                 }
                 return productRepository.findByCategory_Id(categoryId);
+        }
+
+        private Category resolveCategory(Category incoming, Category fallback) {
+                if (incoming == null) {
+                        return fallback;
+                }
+
+                if (incoming.getId() != null && categoryService != null) {
+                        return categoryService.getById(incoming.getId()).orElse(fallback);
+                }
+
+                if (incoming.getName() != null && !incoming.getName().isBlank() && categoryService != null) {
+                        return categoryService.getOrCreateByName(incoming.getName().trim());
+                }
+
+                return fallback;
         }
 }
