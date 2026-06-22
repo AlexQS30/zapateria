@@ -26,7 +26,7 @@ public class PurchaseItem {
     private String color;
 
     @Column(name = "unit_price")
-    private double unitPrice;
+    private Double unitPrice;
 
     public PurchaseItem() {}
 
@@ -49,9 +49,9 @@ public class PurchaseItem {
     public int getQuantity() { return quantity; }
     public String getSize() { return size; }
     public String getColor() { return color; }
-    public double getUnitPrice() { return unitPrice; }
+    public Double getUnitPrice() { return unitPrice; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
     public void setSize(String size) { this.size = size; }
     public void setColor(String color) { this.color = color; }
-    public void setUnitPrice(double unitPrice) { this.unitPrice = unitPrice; }
+    public void setUnitPrice(Double unitPrice) { this.unitPrice = unitPrice; }
 }

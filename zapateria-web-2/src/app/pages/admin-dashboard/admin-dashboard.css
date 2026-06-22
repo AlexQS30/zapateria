@@ -1,5 +1,8 @@
+.error-message { background: #f8d7da; color: #721c24; padding: 15px; border-radius: 6px; margin: 20px; display: flex; justify-content: space-between; align-items: center; }
 .navbar { background: #1a1a1a; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-.dashboard-container { display: flex; min-height: 90vh; background: #f8f9fa; }
+.dashboard-container { display: flex; min-height: 90vh; background: #f8f9fa; position: relative; }
+.loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.spinner { font-size: 1.5rem; font-weight: bold; color: #007bff; }
 .sidebar { width: 260px; background: #ffffff; border-right: 1px solid #e9ecef; padding: 20px; }
 .user-box { margin-bottom: 30px; padding: 15px; background: #f8f9fa; border-radius: 8px; }
 .nav-link { display: flex; align-items: center; gap: 10px; padding: 12px; color: #495057; text-decoration: none; border-radius: 6px; margin-bottom: 5px; cursor: pointer; transition: 0.2s; }
@@ -11,11 +14,17 @@
 .stat-number { font-size: 32px; font-weight: 700; color: #2c3e50; }
 .stat-label { color: #6c757d; font-size: 14px; text-transform: uppercase; margin-top: 5px; }
 .users-table { width: 100%; border-collapse: separate; border-spacing: 0; }
-.users-table th { background: #f8f9fa; padding: 15px; text-align: left; }
+.users-table th { background: #333; color: white; padding: 15px; text-align: left; border-bottom: 2px solid #e9ecef; }
 .users-table td { padding: 15px; border-bottom: 1px solid #e9ecef; }
 .btn { padding: 10px 20px; cursor: pointer; border-radius: 6px; border: none; font-weight: 500; }
 .btn-primary { background: #007bff; color: white; }
 .btn-danger { background: #dc3545; color: white; }
+.btn-icon { background: none; border: none; cursor: pointer; color: #6c757d; font-size: 1.1rem; padding: 5px; }
+.btn-icon:hover { color: #007bff; }
+.btn-icon.btn-danger:hover { color: #dc3545; }
+.badge { padding: 5px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: 600; background: #e9ecef; color: #495057; }
+.badge-admin { background: #d1ecf1; color: #0c5460; }
+.actions { display: flex; gap: 10px; }
 .logout { background: transparent; color: #dc3545; width: 100%; margin-top: auto; border: 1px solid #dc3545; }
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; }
 .modal-box { background: #fff; padding: 30px; border-radius: 12px; width: 450px; }

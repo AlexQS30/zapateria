@@ -3,6 +3,17 @@
 </div>
 
 <div class="dashboard-container">
+    <!-- Loading overlay -->
+    <div *ngIf="isLoading" class="loading-overlay">
+        <div class="spinner">Cargando...</div>
+    </div>
+    
+    <!-- Error message display -->
+    <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+        <button (click)="errorMessage = ''">Cerrar</button>
+    </div>
+    
     <div class="sidebar">
         <div class="user-box">
             <div class="user-name">{{ user?.firstName }} {{ user?.lastName }}</div>
@@ -12,6 +23,7 @@
         <a class="nav-link" [class.active]="activeSection === 'dashboard'" (click)="mostrarSeccion('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</a>
         <a class="nav-link" [class.active]="activeSection === 'usuarios'" (click)="mostrarSeccion('usuarios')"><i class="fas fa-users"></i> Usuarios</a>
         <a class="nav-link" [class.active]="activeSection === 'productos'" (click)="mostrarSeccion('productos')"><i class="fas fa-box"></i> Productos</a>
+        <a class="nav-link" [class.active]="activeSection === 'categorias'" (click)="mostrarSeccion('categorias')"><i class="fas fa-tags"></i> Categorías</a>
         <a class="nav-link" [class.active]="activeSection === 'ordenes'" (click)="mostrarSeccion('ordenes')"><i class="fas fa-shopping-cart"></i> Órdenes</a>
 
         <button class="btn logout" (click)="logout()">Cerrar sesión</button>
@@ -33,20 +45,29 @@
 
         <div *ngIf="activeSection === 'productos'">
             <div class="card">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
                     <h3>Gestión de Productos</h3>
                     <button class="btn btn-primary" (click)="initProductForm()">+ Nuevo Producto</button>
                 </div>
                 <table class="users-table">
-                    <thead><tr><th>Nombre</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Descuento</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         <tr *ngFor="let p of products">
                             <td>{{p.name}}</td>
                             <td>{{p.price | currency}}</td>
                             <td>{{p.stock}}</td>
-                            <td>
-                                <button class="btn btn-primary" (click)="initProductForm(p)">Editar</button>
-                                <button class="btn btn-danger" (click)="deleteProduct(p.id)">Eliminar</button>
+                            <td>{{p.discount}}%</td>
+                            <td class="actions">
+                                <button class="btn-icon" title="Editar" (click)="initProductForm(p)"><i class="fas fa-edit"></i></button>
+                                <button class="btn-icon btn-danger" title="Eliminar" (click)="deleteProduct(p.id)"><i class="fas fa-trash-alt"></i></button>
                             </td>
                         </tr>
                     </tbody>
@@ -54,7 +75,106 @@
             </div>
         </div>
 
-        <!-- ... otras secciones ... -->
+        <div *ngIf="activeSection === 'categorias'">
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                    <h3>Gestión de Categorías</h3>
+                    <button class="btn btn-primary" (click)="initCategoryForm()">+ Nueva Categoría</button>
+                </div>
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Imagen</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let c of categories">
+                            <td>{{c.name}}</td>
+                            <td><img [src]="c.image" alt="Cat" style="width: 50px; height: 50px; border-radius: 50%;"></td>
+                            <td class="actions">
+                                <button class="btn-icon" title="Editar" (click)="initCategoryForm(c)"><i class="fas fa-edit"></i></button>
+                                <button class="btn-icon btn-danger" title="Eliminar" (click)="deleteCategory(c.id)"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div *ngIf="activeSection === 'usuarios'">
+
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                    <h3>Gestión de Usuarios</h3>
+                    <button class="btn btn-primary" (click)="initUserForm()">+ Nuevo Usuario</button>
+                </div>
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let u of users">
+                            <td>{{u.firstName}} {{u.lastName}}</td>
+                            <td>{{u.email}}</td>
+                            <td><span class="badge" [class.badge-admin]="u.role === 'ADMIN'">{{u.role}}</span></td>
+                            <td><span [style.color]="u.isActive ? 'green' : 'red'">{{u.isActive ? 'Activo' : 'Inactivo'}}</span></td>
+                            <td class="actions">
+                                <button class="btn-icon" title="Editar" (click)="initUserForm(u)"><i class="fas fa-edit"></i></button>
+                                <button class="btn-icon btn-danger" title="Eliminar" (click)="deleteUser(u.id)"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- User modal -->
+        <div *ngIf="currentUser" class="modal-overlay">
+            <div class="modal-box">
+                <h3>{{ isEditUser ? 'Editar' : 'Nuevo' }} Usuario</h3>
+                <input type="text" [(ngModel)]="currentUser.firstName" placeholder="Nombre">
+                <input type="text" [(ngModel)]="currentUser.lastName" placeholder="Apellido">
+                <input type="email" [(ngModel)]="currentUser.email" placeholder="Email">
+                <div style="position: relative;">
+                    <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="currentUser.password" placeholder="Contraseña">
+                    <button type="button" class="btn-icon" (click)="showPassword = !showPassword" style="position: absolute; right: 10px; top: 10px;">
+                        <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+                    </button>
+                </div>
+                <select [(ngModel)]="currentUser.role">
+                    <option value="USER">Usuario</option>
+                    <option value="ADMIN">Administrador</option>
+                </select>
+                <div style="margin-top:15px; display:flex; gap:10px;">
+                    <button class="btn btn-primary" (click)="saveUser()">Guardar</button>
+                    <button class="btn" (click)="currentUser = null">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="activeSection === 'ordenes'">
+            <div class="card">
+                <h3>Órdenes de Compra</h3>
+                <table class="users-table">
+                    <thead><tr><th>ID</th><th>Total</th><th>Estado</th></tr></thead>
+                    <tbody>
+                        <tr *ngFor="let o of purchases">
+                            <td>{{o.id}}</td>
+                            <td>{{o.total | currency}}</td>
+                            <td>{{o.status}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -66,9 +186,24 @@
         <input type="number" [(ngModel)]="currentProduct.stock" placeholder="Stock">
         <input type="number" [(ngModel)]="currentProduct.discount" placeholder="Descuento (%)">
         <input type="text" [(ngModel)]="currentProduct.image" placeholder="URL Imagen">
+        <select [(ngModel)]="currentProduct.category.id">
+            <option *ngFor="let c of categories" [value]="c.id">{{c.name}}</option>
+        </select>
         <div style="margin-top:15px; display:flex; gap:10px;">
             <button class="btn btn-primary" (click)="saveProduct()">Guardar</button>
             <button class="btn" (click)="currentProduct = null">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="currentCategory" class="modal-overlay">
+    <div class="modal-box">
+        <h3>{{ isEditCategory ? 'Editar' : 'Nueva' }} Categoría</h3>
+        <input type="text" [(ngModel)]="currentCategory.name" placeholder="Nombre">
+        <input type="text" [(ngModel)]="currentCategory.image" placeholder="URL Imagen">
+        <div style="margin-top:15px; display:flex; gap:10px;">
+            <button class="btn btn-primary" (click)="saveCategory()">Guardar</button>
+            <button class="btn" (click)="currentCategory = null">Cancelar</button>
         </div>
     </div>
 </div>

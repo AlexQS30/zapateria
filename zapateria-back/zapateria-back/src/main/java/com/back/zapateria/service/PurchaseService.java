@@ -133,6 +133,11 @@ public class PurchaseService {
         return List.of();
     }
 
+    public List<Purchase> listAll() {
+        if (purchaseRepository != null) return purchaseRepository.findAll();
+        return List.of();
+    }
+
     public List<Purchase> listByUserEmail(String userEmail) {
         User user = requireUser(userEmail);
         return listByUser(String.valueOf(user.getId()));

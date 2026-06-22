@@ -15,8 +15,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     private final JwtService jwtService;
 
@@ -33,15 +37,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String token = request.getHeader("Authorization").substring(7);
+        String authHeader = request.getHeader("Authorization");
+        
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            logger.debug("No valid Authorization header for URI: {}", request.getRequestURI());
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = authHeader.substring(7);
 
         try {
-            if (jwtService.isTokenValid(token) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (jwtService.isTokenValid(token)) {
                 String email = jwtService.extractEmail(token);
                 String role = jwtService.extractRole(token);
+                
+                logger.info("Authentication successful for user: {}, role: {}, URI: {}", email, role, request.getRequestURI());
+                
                 List<SimpleGrantedAuthority> authorities = role == null
                         ? List.of()
                         : List.of(new SimpleGrantedAuthority("ROLE_" + role));
+                
+                logger.debug("Granting authorities: {}", authorities);
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         email,
@@ -50,8 +67,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 );
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                logger.warn("Invalid or expired token for URI: {}", request.getRequestURI());
+                SecurityContextHolder.clearContext();
             }
-        } catch (RuntimeException ignored) {
+        } catch (Exception e) {
+            logger.error("Authentication error for URI {}: {}", request.getRequestURI(), e.getMessage());
             SecurityContextHolder.clearContext();
         }
 

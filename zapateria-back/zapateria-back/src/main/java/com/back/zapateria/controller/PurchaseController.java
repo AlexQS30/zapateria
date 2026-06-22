@@ -40,6 +40,12 @@ public class PurchaseController {
         return ResponseEntity.ok(purchaseService.listByUserEmail(principal.getName()));
     }
 
+    @GetMapping
+    @Operation(summary = "Listar todas las compras (ADMIN)", description = "Retorna todas las compras registradas en el sistema")
+    public ResponseEntity<?> listAll() {
+        return ResponseEntity.ok(purchaseService.listAll());
+    }
+
     @GetMapping("/me/{purchaseId}")
     @Operation(summary = "Obtener compra del usuario autenticado", description = "Retorna una compra por su ID para el usuario autenticado")
     public ResponseEntity<Purchase> getOne(Principal principal, @PathVariable String purchaseId) {
