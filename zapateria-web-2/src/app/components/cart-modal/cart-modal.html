@@ -1,0 +1,46 @@
+<div class="footstyle-overlay">
+    <div class="footstyle-panel">
+        <div class="footstyle-row" style="justify-content:space-between; margin-bottom: 16px;">
+            <div>
+                <h2 style="margin:0 0 4px;">Tu carrito</h2>
+                <div style="color:#666;">Revisa tus productos antes de pagar</div>
+            </div>
+            <button class="footstyle-close" type="button">&times;</button>
+        </div>
+        <div class="footstyle-grid">
+            <div>
+                <div *ngIf="cartService.cartItems().length === 0" class="footstyle-empty-state">
+                    <div class="footstyle-empty-icon"><i class="fas fa-shopping-bag"></i></div>
+                    <h3 style="margin:0 0 8px;">Tu carrito está vacío</h3>
+                    <button type="button" class="btn btn-secondary">Seguir comprando</button>
+                </div>
+                
+                <div *ngFor="let item of cartService.cartItems()" class="footstyle-item">
+                    <img [src]="item.image" [alt]="item.name">
+                    <div>
+                        <h4 style="margin:0 0 6px;">{{ item.name }}</h4>
+                        <div class="footstyle-row">
+                            <span class="footstyle-pill">Talla {{ item.size }}</span>
+                            <span class="footstyle-pill">Color {{ item.color }}</span>
+                            <span class="footstyle-pill">S/. {{ item.price | number:'1.2-2' }}</span>
+                        </div>
+                    </div>
+                    <div class="footstyle-actions" style="flex-direction:column; align-items:flex-end;">
+                        <strong>S/. {{ (item.price * item.quantity) | number:'1.2-2' }}</strong>
+                        <button type="button" class="btn btn-outline" (click)="cartService.removeItem(item.productId, item.size, item.color)">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div style="background:#f7f5f1; border-radius:16px; padding:18px;">
+                    <h3 style="margin-top:0;">Resumen</h3>
+                    <div class="footstyle-row" style="justify-content:space-between; align-items:center; margin-bottom: 12px;">
+                        <span>Total</span>
+                        <strong>S/. {{ cartService.cartItems().reduce((acc, i) => acc + (i.price * i.quantity), 0) | number:'1.2-2' }}</strong>
+                    </div>
+                    <button type="button" class="btn btn-primary" [disabled]="cartService.cartItems().length === 0">Pagar ahora</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

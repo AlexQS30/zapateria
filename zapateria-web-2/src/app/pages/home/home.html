@@ -1,0 +1,127 @@
+<section class="hero-slider" id="hero-slider" aria-label="Colecciones destacadas">
+    <div class="hero-track">
+        <article class="hero-slide active">
+            <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1400&auto=format&fit=crop" alt="Nueva colección de calzado urbano">
+            <div class="hero-content">
+                <p class="hero-kicker">Nueva temporada</p>
+                <h1>Diseño premium para cada paso del día</h1>
+                <p>Descubre una selección curada de zapatillas y zapatos con estilo contemporáneo y máxima comodidad.</p>
+                <div class="hero-actions">
+                    <a href="#categorias" class="btn btn-primary"><i class="fas fa-compass"></i> Explorar colección</a>
+                    <a href="#ofertas" class="btn btn-secondary">Ver ofertas</a>
+                </div>
+            </div>
+        </article>
+        <article class="hero-slide">
+            <img src="https://images.unsplash.com/photo-1511556670410-f35aa76f1f6d?q=80&w=1400&auto=format&fit=crop" alt="Accesorios y tendencias en moda">
+            <div class="hero-content">
+                <p class="hero-kicker">Accesorios</p>
+                <h1>Completa tu look con piezas clave</h1>
+                <p>Desde bolsos hasta complementos esenciales, combina funcionalidad y estética en una sola compra.</p>
+                <div class="hero-actions">
+                    <a href="/accesorios" class="btn btn-primary">Comprar accesorios</a>
+                    <a href="#featured" class="btn btn-secondary">Productos destacados</a>
+                </div>
+            </div>
+        </article>
+    </div>
+</section>
+
+<section class="categories" id="categorias">
+    <div class="container">
+        <div class="section-header">
+            <h2>Encuentra tu Estilo</h2>
+        </div>
+        <div class="categories-grid">
+            <div class="category-card" *ngFor="let category of categories">
+                <div class="category-image" *ngIf="category.image">
+                    <img [src]="category.image" [alt]="category.name" loading="lazy">
+                </div>
+                <div class="category-info">
+                    <h3>{{ category.name }}</h3>
+                    <p>{{ category.description }}</p>
+                    <a [routerLink]="['/categoria', category.name]" class="btn btn-secondary">Ver Colección</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="offers" id="ofertas">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="offers-title">Ofertas especiales</h2>
+            <p class="offers-subtitle">Descuentos destacados en tus categorías favoritas</p>
+        </div>
+        <div class="products-grid">
+            <div class="product-card" *ngFor="let offer of offers">
+                <div class="product-image" *ngIf="offer.image">
+                    <img [src]="offer.image" [alt]="offer.name" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+                    <div style="position:absolute;top:15px;right:15px;background:#FFD700;color:#333;padding:12px 20px;border-radius:8px;font-weight:bold;font-size:18px;box-shadow:0 4px 10px rgba(0,0,0,0.2);">-{{ offer.discount }}%</div>
+                </div>
+                <div class="product-info">
+                    <h3>{{ offer.name }}</h3>
+                    <p>{{ offer.description }}</p>
+                    <div class="offer-percent">Hasta {{ offer.discount }}% OFF</div>
+                    <a [routerLink]="['/producto', offer.id]" class="btn btn-secondary">Ver Oferta</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="featured" id="featured">
+    <div class="container">
+        <div class="section-header">
+            <h2>Productos Destacados</h2>
+            <p class="section-subtitle">Descubre nuestras selecciones premium</p>
+        </div>
+        <div class="products-grid">
+            <div class="product-card" *ngFor="let product of featuredProducts">
+                <div class="product-image">
+                    <img [src]="product.image" [alt]="product.name" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+                    <div class="product-overlay">
+                        <a class="btn-icon" [routerLink]="['/producto', product.id]">
+                            <i class="fas fa-eye"></i> Ver detalles
+                        </a>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h4 class="product-name">{{ product.name }}</h4>
+                    <p class="product-category">{{ product.category }}</p>
+                    <div class="rating">
+                        <i class="fas fa-star" *ngFor="let i of [1,2,3,4,5]"></i>
+                        <span>({{ product.reviews }})</span>
+                    </div>
+                    <div class="product-prices">
+                        <span class="product-price">S/. {{ product.price }}</span>
+                    </div>
+                    <a class="btn btn-outline" [routerLink]="['/producto', product.id]">
+                        <i class="fas fa-shopping-cart"></i> Ver detalle
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="testimonials">
+    <div class="container">
+        <div class="section-header">
+            <h2>Lo que dicen nuestros clientes</h2>
+            <p class="section-subtitle">Satisfacción garantizada en cada compra</p>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card" *ngFor="let r of reviews">
+                <div class="testimonial-stars"><i class="fas fa-star" *ngFor="let i of [1,2,3,4,5]"></i></div>
+                <p class="testimonial-text">"{{ r.comment }}"</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);"><i class="fas fa-user"></i></div>
+                    <div>
+                        <h4>{{ r.userName }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

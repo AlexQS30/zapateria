@@ -1,0 +1,23 @@
+<div class="container" style="padding: 40px 20px; max-width: 500px; margin: 0 auto;">
+    <h2>Regístrate</h2>
+    <form (ngSubmit)="onRegister()" #regForm="ngForm">
+        <div class="form-group" style="margin-bottom: 10px;">
+            <label>Nombre</label>
+            <input type="text" [(ngModel)]="userData.firstName" name="firstName" class="form-control" required style="width: 100%; padding: 8px;">
+        </div>
+        <div class="form-group" style="margin-bottom: 10px;">
+            <label>Apellido</label>
+            <input type="text" [(ngModel)]="userData.lastName" name="lastName" class="form-control" required style="width: 100%; padding: 8px;">
+        </div>
+        <div class="form-group" style="margin-bottom: 10px;">
+            <label>Correo Electrónico</label>
+            <input type="email" [(ngModel)]="userData.email" name="email" class="form-control" required style="width: 100%; padding: 8px;">
+        </div>
+        <div class="form-group" style="margin-bottom: 10px;">
+            <label>Contraseña</label>
+            <input type="password" [(ngModel)]="userData.password" name="password" class="form-control" required style="width: 100%; padding: 8px;">
+        </div>
+        <div *ngIf="errorMessage" style="color: red; margin-bottom: 15px;">{{ errorMessage }}</div>
+        <button type="submit" class="btn btn-primary" [disabled]="!regForm.valid">Registrarse</button>
+    </form>
+</div>

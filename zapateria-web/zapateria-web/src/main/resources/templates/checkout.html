@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - FootStyle</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .checkout-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin: 40px 0;
+        }
+        .checkout-section {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .checkout-section h2 {
+            margin: 0 0 20px 0;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #101214;
+            box-shadow: 0 0 0 3px rgba(16,18,20,0.1);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .order-summary {
+            position: sticky;
+            top: 40px;
+        }
+        .summary-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #eee;
+        }
+        .summary-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .summary-item-info {
+            flex: 1;
+        }
+        .summary-item-info h4 {
+            margin: 0 0 4px 0;
+            font-size: 14px;
+        }
+        .summary-item-info .meta {
+            font-size: 12px;
+            color: #666;
+            margin: 4px 0;
+        }
+        .summary-item-price {
+            font-weight: 700;
+            text-align: right;
+        }
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-top: 2px solid #101214;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .payment-methods {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .payment-method:hover {
+            border-color: #101214;
+            background: #f9f9f9;
+        }
+        .payment-method input[type="radio"] {
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        .payment-method label {
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+            font-weight: 600;
+        }
+        .btn-checkout {
+            width: 100%;
+            padding: 14px;
+            background: #101214;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .btn-checkout:hover:not(:disabled) {
+            background: #c4a27e;
+            color: #101214;
+        }
+        .btn-checkout:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .success-message {
+            background: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .success-message i {
+            color: #2e7d32;
+            margin-right: 8px;
+        }
+        @media (max-width: 768px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+            .order-summary {
+                position: static;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <main class="container" style="padding: 20px 15px 60px;">
+        <h1 style="margin: 20px 0;">Checkout</h1>
+
+        <div id="checkout-content" style="display: none;">
+            <div class="checkout-container">
+                <!-- Formulario de checkout -->
+                <div class="checkout-section">
+                    <h2><i class="fas fa-user"></i> Datos de envío</h2>
+                    <form id="checkout-form">
+                        <div class="form-group">
+                            <label>Nombre completo</label>
+                            <input type="text" id="fullname" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Teléfono de contacto</label>
+                            <input type="tel" id="contactPhone" placeholder="+51 999 999 999" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Dirección de envío</label>
+                            <textarea id="shippingAddress" placeholder="Av. Principal 123, Apto 5" required></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Ciudad</label>
+                                <input type="text" id="city" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Código postal</label>
+                                <input type="text" id="postalCode">
+                            </div>
+                        </div>
+
+                        <h2 style="margin-top: 30px;"><i class="fas fa-credit-card"></i> Método de pago</h2>
+                        <div class="payment-methods">
+                            <label class="payment-method">
+                                <input type="radio" name="paymentMethod" value="TARJETA_CREDITO" checked>
+                                <label style="margin: 0;">💳 Tarjeta de crédito/débito</label>
+                            </label>
+                            <label class="payment-method">
+                                <input type="radio" name="paymentMethod" value="YAPE">
+                                <label style="margin: 0;">📱 Yape / Plin</label>
+                            </label>
+                            <label class="payment-method">
+                                <input type="radio" name="paymentMethod" value="EFECTIVO">
+                                <label style="margin: 0;">💵 Efectivo contra entrega</label>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-checkout">
+                            <span id="checkout-btn-text">Confirmar compra</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Resumen de pedido -->
+                <div>
+                    <div class="checkout-section order-summary">
+                        <h2><i class="fas fa-package"></i> Resumen del pedido</h2>
+                        <div id="order-items"></div>
+                        <div class="summary-total">
+                            <span>Total:</span>
+                            <span id="total-price">S/. 0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="checkout-empty" class="checkout-section" style="text-align: center; padding: 60px 20px;">
+            <div style="margin-bottom: 20px; font-size: 48px; color: #ccc;">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <h2>Tu carrito está vacío</h2>
+            <p style="color: #666; margin: 10px 0 20px;">Agrega productos para continuar con tu compra</p>
+            <a href="/" class="btn btn-primary" style="display: inline-block; padding: 12px 24px;">Volver a comprar</a>
+        </div>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <script th:src="@{/js/auth-integration.js}"></script>
+    <script th:src="@{/js/cart.js}"></script>
+    <script>
+        const API_BASE = 'http://localhost:8081/api';
+
+        function getToken() {
+            return (typeof window.getAuthToken === 'function' ? window.getAuthToken() : localStorage.getItem('auth_token')) || null;
+        }
+
+        async function initCheckout() {
+            const token = getToken();
+            const user = window.getCurrentUser?.();
+            
+            if (!token || !user) {
+                document.getElementById('checkout-empty').innerHTML = `
+                    <div style="font-size: 48px; color: #ccc; margin-bottom: 20px;">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h2>Inicia sesión para comprar</h2>
+                    <p style="color: #666; margin: 10px 0 20px;">Necesitas estar autenticado para completar tu compra</p>
+                    <a href="/login" class="btn btn-primary" style="display: inline-block; padding: 12px 24px;">Ir a login</a>
+                `;
+                return;
+            }
+
+            const cart = typeof window.footstyleGetCart === 'function' 
+                ? window.footstyleGetCart() 
+                : JSON.parse(localStorage.getItem('footstyleCart') || '[]');
+
+            if (!cart || cart.length === 0) {
+                document.getElementById('checkout-empty').style.display = 'block';
+                document.getElementById('checkout-content').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('checkout-content').style.display = 'block';
+            document.getElementById('checkout-empty').style.display = 'none';
+
+            // Pre-fill usuario
+            document.getElementById('fullname').value = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+
+            // Renderizar items
+            let total = 0;
+            const itemsHtml = cart.map(item => {
+                const itemTotal = (item.price || 0) * (item.quantity || 1);
+                total += itemTotal;
+                return `
+                    <div class="summary-item">
+                        <img src="${item.imageUrl || ''}" alt="${item.name}">
+                        <div class="summary-item-info">
+                            <h4>${item.name}</h4>
+                            <div class="meta">Talla ${item.size} • Color ${item.color}</div>
+                            <div class="meta">Cantidad: ${item.quantity}</div>
+                        </div>
+                        <div class="summary-item-price">S/. ${itemTotal.toFixed(2)}</div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('order-items').innerHTML = itemsHtml;
+            document.getElementById('total-price').textContent = `S/. ${total.toFixed(2)}`;
+        }
+
+        document.getElementById('checkout-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const token = getToken();
+            if (!token) {
+                alert('Sesión expirada. Por favor, inicia sesión nuevamente.');
+                window.location.href = '/login';
+                return;
+            }
+
+            const cart = typeof window.footstyleGetCart === 'function' 
+                ? window.footstyleGetCart() 
+                : JSON.parse(localStorage.getItem('footstyleCart') || '[]');
+
+            if (!cart.length) {
+                alert('Tu carrito está vacío');
+                return;
+            }
+
+            const button = document.querySelector('.btn-checkout');
+            const originalText = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = '<span class="loading-spinner"></span>Procesando...';
+
+            try {
+                const response = await fetch(`${API_BASE}/purchases/checkout`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        items: cart.map(item => ({
+                            productId: item.productId,
+                            quantity: item.quantity,
+                            size: item.size,
+                            color: item.color
+                        })),
+                        paymentMethod: document.getElementById('checkout-form').querySelector('[name="paymentMethod"]').value,
+                        shippingAddress: document.getElementById('shippingAddress').value,
+                        contactPhone: document.getElementById('contactPhone').value
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json().catch(() => ({}));
+                    throw new Error(error.message || 'Error al procesar la compra');
+                }
+
+                // Limpiar carrito
+                localStorage.removeItem('footstyleCart');
+                if (typeof window.footstyleClearCart === 'function') {
+                    window.footstyleClearCart();
+                }
+
+                // Redirigir a mis pedidos con éxito
+                window.location.href = '/mis-pedidos?success=true';
+            } catch (error) {
+                alert('Error: ' + error.message);
+                button.disabled = false;
+                button.innerHTML = originalText;
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', initCheckout);
+    </script>
+</body>
+</html>

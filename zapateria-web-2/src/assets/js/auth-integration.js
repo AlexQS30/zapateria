@@ -266,9 +266,7 @@ window.addEventListener('storage', () => {
     if (token && user) {
         window.renderAuthHeader && window.renderAuthHeader();
     }
-});
-};
-
+}); 
 /**
  * Redirige al usuario según su rol
  */

@@ -1,0 +1,392 @@
+/* =====================================
+   FOOTSTYLE ADMIN DASHBOARD (MODERNO)
+   ===================================== */
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f4f6f9;
+    color: #1a1a1a;
+}
+
+/* NAVBAR */
+.navbar {
+    background: linear-gradient(135deg, #1a1a1a, #333);
+    color: white;
+    padding: 15px 25px;
+    font-weight: bold;
+    font-size: 18px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* LAYOUT */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 260px;
+    background: white;
+    padding: 20px;
+    box-shadow: 2px 0 15px rgba(0,0,0,0.05);
+}
+
+.user-box {
+    padding: 15px;
+    border-radius: 12px;
+    background: #f9f9f9;
+    margin-bottom: 20px;
+}
+
+.user-name {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.user-email {
+    font-size: 13px;
+    color: #777;
+}
+
+.nav-link {
+    display: block;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.nav-link i {
+    margin-right: 8px;
+}
+
+.nav-link:hover {
+    background: #1a1a1a;
+    color: white;
+}
+
+.nav-link.active {
+    background: #d4a574;
+    color: #1a1a1a;
+}
+
+/* MAIN */
+.main {
+    flex: 1;
+    padding: 30px;
+}
+
+/* CARDS */
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+}
+
+/* TITULOS */
+.card h2 {
+    margin: 0;
+}
+
+.card-title {
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+/* STATS */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.stat {
+    text-align: center;
+    padding: 25px;
+}
+
+.stat i {
+    font-size: 26px;
+    color: #d4a574;
+    margin-bottom: 10px;
+}
+
+.stat-number {
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #777;
+}
+
+/* BOTONES */
+.btn {
+    padding: 12px 15px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    margin: 5px 0;
+    width: 100%;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #1a1a1a, #333);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #d4a574;
+    color: #1a1a1a;
+}
+
+/* USUARIOS PANEL */
+#usuariosSection .card-header {
+    background: #1a1a1a;
+    color: white;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+#formUsuario {
+    background: #fafafa;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    margin-top: 15px;
+}
+
+/* INPUTS */
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    outline: none;
+    font-size: 14px;
+}
+
+input:focus, select:focus {
+    border-color: #d4a574;
+    box-shadow: 0 0 0 3px rgba(212,165,116,0.2);
+}
+
+/* GRID FORM (SIMPLIFICADO SIN BOOTSTRAP) */
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .stats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .row {
+        grid-template-columns: 1fr;
+    }
+
+}
+.users-card {
+    padding: 20px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* BOTÓN FULL WIDTH */
+.full-width {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+/* WRAPPER TABLA */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+}
+
+/* TABLA MODERNA */
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* HEADER */
+.users-table thead {
+    background: #d4a373;
+    color: white;
+}
+
+.users-table th {
+    padding: 14px;
+    text-align: left;
+    font-size: 14px;
+}
+
+/* FILAS */
+.users-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+.users-table tr:hover {
+    background: #fafafa;
+}
+
+/* BOTONES ACCIÓN */
+.btn-action {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    margin: 0 3px;
+}
+
+.btn-edit {
+    background: #2a9d8f;
+    color: white;
+}
+
+.btn-delete {
+    background: #e63946;
+    color: white;
+}
+
+.btn-edit:hover { opacity: 0.8; }
+.btn-delete:hover { opacity: 0.8; }
+/* ================= MODAL ================= */
+
+.modal-overlay{
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: rgba(0,0,0,0.55);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+    backdrop-filter: blur(5px);
+}
+
+.modal-box{
+    background:#fff;
+    width:420px;
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn{
+    from { transform: scale(0.9); opacity:0; }
+    to { transform: scale(1); opacity:1; }
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.modal-header h3{
+    margin:0;
+    font-size:18px;
+}
+
+.modal-close{
+    background:none;
+    border:none;
+    font-size:22px;
+    cursor:pointer;
+}
+
+.modal-body{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.form-group label{
+    font-size:12px;
+    color:#666;
+}
+
+.modal-box input,
+.modal-box select{
+    width:100%;
+    padding:10px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    outline:none;
+    transition:0.2s;
+}
+
+.modal-box input:focus,
+.modal-box select:focus{
+    border-color:#d4a373;
+}
+
+.modal-footer{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:15px;
+}
+
+.btn-cancel{
+    background:#eee;
+    border:none;
+    padding:8px 14px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.btn-save{
+    background:#d4a373;
+    border:none;
+    color:white;
+    padding:8px 14px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.btn-save:hover{
+    background:#b08968;
+}

@@ -1,0 +1,74 @@
+<div class="navbar">
+    <span class="navbar-brand">FootStyle Admin</span>
+</div>
+
+<div class="dashboard-container">
+    <div class="sidebar">
+        <div class="user-box">
+            <div class="user-name">{{ user?.firstName }} {{ user?.lastName }}</div>
+            <div class="user-email">{{ user?.email }}</div>
+        </div>
+
+        <a class="nav-link" [class.active]="activeSection === 'dashboard'" (click)="mostrarSeccion('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a class="nav-link" [class.active]="activeSection === 'usuarios'" (click)="mostrarSeccion('usuarios')"><i class="fas fa-users"></i> Usuarios</a>
+        <a class="nav-link" [class.active]="activeSection === 'productos'" (click)="mostrarSeccion('productos')"><i class="fas fa-box"></i> Productos</a>
+        <a class="nav-link" [class.active]="activeSection === 'ordenes'" (click)="mostrarSeccion('ordenes')"><i class="fas fa-shopping-cart"></i> Órdenes</a>
+
+        <button class="btn logout" (click)="logout()">Cerrar sesión</button>
+    </div>
+
+    <div class="main">
+        <div *ngIf="activeSection === 'dashboard'">
+            <div class="stats">
+                <div class="card stat"><div class="stat-number">{{stats.users}}</div><div class="stat-label">Usuarios</div></div>
+                <div class="card stat"><div class="stat-number">{{stats.products}}</div><div class="stat-label">Productos</div></div>
+                <div class="card stat"><div class="stat-number">{{stats.sales}}</div><div class="stat-label">Ventas</div></div>
+                <div class="card stat"><div class="stat-number">{{stats.revenue | currency}}</div><div class="stat-label">Ingresos</div></div>
+            </div>
+            <div class="card">
+                <h2>Panel de administración</h2>
+                <p>Bienvenido al panel de control de FootStyle.</p>
+            </div>
+        </div>
+
+        <div *ngIf="activeSection === 'productos'">
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>Gestión de Productos</h3>
+                    <button class="btn btn-primary" (click)="initProductForm()">+ Nuevo Producto</button>
+                </div>
+                <table class="users-table">
+                    <thead><tr><th>Nombre</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr></thead>
+                    <tbody>
+                        <tr *ngFor="let p of products">
+                            <td>{{p.name}}</td>
+                            <td>{{p.price | currency}}</td>
+                            <td>{{p.stock}}</td>
+                            <td>
+                                <button class="btn btn-primary" (click)="initProductForm(p)">Editar</button>
+                                <button class="btn btn-danger" (click)="deleteProduct(p.id)">Eliminar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ... otras secciones ... -->
+    </div>
+</div>
+
+<div *ngIf="currentProduct" class="modal-overlay">
+    <div class="modal-box">
+        <h3>{{ isEdit ? 'Editar' : 'Nuevo' }} Producto</h3>
+        <input type="text" [(ngModel)]="currentProduct.name" placeholder="Nombre">
+        <input type="number" [(ngModel)]="currentProduct.price" placeholder="Precio">
+        <input type="number" [(ngModel)]="currentProduct.stock" placeholder="Stock">
+        <input type="number" [(ngModel)]="currentProduct.discount" placeholder="Descuento (%)">
+        <input type="text" [(ngModel)]="currentProduct.image" placeholder="URL Imagen">
+        <div style="margin-top:15px; display:flex; gap:10px;">
+            <button class="btn btn-primary" (click)="saveProduct()">Guardar</button>
+            <button class="btn" (click)="currentProduct = null">Cancelar</button>
+        </div>
+    </div>
+</div>

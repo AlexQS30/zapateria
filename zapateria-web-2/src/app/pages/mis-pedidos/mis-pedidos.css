@@ -1,0 +1,17 @@
+.empty-state {
+    padding: 20px;
+    text-align: center;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+.btn-secondary {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    background-color: #eee;
+    cursor: pointer;
+}
+.btn-secondary:hover {
+    background-color: #ddd;
+}
