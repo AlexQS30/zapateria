@@ -77,7 +77,10 @@ public class SecurityConfig {
 
                 
                 .requestMatchers(HttpMethod.GET, "/api/dashboard/*").hasRole("ADMIN") 
+                .requestMatchers(HttpMethod.GET, "/api/reviews/public").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/reviews").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PATCH, "/api/reviews/*/approve").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/reviews/*").hasRole("ADMIN")
                 // any other request requires authentication
                 .anyRequest().authenticated()
             )
