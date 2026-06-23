@@ -1,6 +1,7 @@
 package com.back.zapateria.controller;
 
 import com.back.zapateria.dto.DashboardStats;
+import com.back.zapateria.dto.DashboardAnalytics;
 import com.back.zapateria.repository.UserRepository;
 import com.back.zapateria.repository.ProductRepository;
 import com.back.zapateria.repository.PurchaseRepository;
@@ -30,5 +31,15 @@ public class DashboardController {
         double revenue = purchases.stream().mapToDouble(p -> p.getTotal()).sum();
         
         return ResponseEntity.ok(new DashboardStats(userCount, productCount, saleCount, revenue));
+    }
+
+    @GetMapping("/analytics")
+    public ResponseEntity<DashboardAnalytics> getAnalytics() {
+        var topBuyers = purchaseRepository.findTopBuyers();
+        var topProducts = purchaseRepository.findTopProducts();
+        var peakMonthResult = purchaseRepository.findPeakSalesMonth();
+        String peakMonth = peakMonthResult.isEmpty() ? "N/A" : (String) peakMonthResult.get(0)[0];
+        
+        return ResponseEntity.ok(new DashboardAnalytics(topBuyers, topProducts, peakMonth));
     }
 }

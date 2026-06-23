@@ -1,7 +1,7 @@
 package com.back.zapateria.controller;
 
-import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
@@ -15,52 +15,37 @@ import org.springframework.http.ResponseEntity;
 
 import com.back.zapateria.model.Product;
 import com.back.zapateria.model.Review;
-import com.back.zapateria.service.ReviewService;
+import com.back.zapateria.repository.ReviewRepository;
 
 @ExtendWith(MockitoExtension.class)
 class ReviewControllerTest {
 
     @Mock
-    private ReviewService reviewService;
+    private ReviewRepository reviewRepository;
 
     @InjectMocks
     private ReviewController controller;
 
     @Test
-    void list_returnsProductReviews() {
+    void list_returnsAllReviews() {
         Product product = new Product("p1", "Zapatilla", 100.0, "/img", "hombre", false, 3, 0, 4.0);
-        when(reviewService.listByProduct("p1")).thenReturn(List.of(new Review(product, "u1", 5, "Excelente")));
+        when(reviewRepository.findAll()).thenReturn(List.of(new Review(product, "u1", 5, "Excelente")));
 
-        ResponseEntity<List<Review>> response = controller.list("p1");
+        List<Review> response = controller.getAllReviews();
 
-        assertEquals(200, response.getStatusCode().value());
-        assertEquals(1, response.getBody().size());
-        verify(reviewService).listByProduct("p1");
+        assertEquals(1, response.size());
+        verify(reviewRepository).findAll();
     }
 
     @Test
-    void create_returnsCreatedReview() {
-        Principal principal = () -> "user@demo.com";
-        Product product = new Product("p1", "Zapatilla", 100.0, "/img", "hombre", false, 3, 0, 4.0);
-        Review review = new Review(product, "1", 4, "Buena compra");
-        when(reviewService.createReview("user@demo.com", "p1", 4, "Buena compra")).thenReturn(review);
+    void approveReview_updatesStatus() {
+        Review review = new Review(new Product(), "u1", 4, "Buena");
+        when(reviewRepository.findById(1L)).thenReturn(Optional.of(review));
 
-        ResponseEntity<Review> response = controller.create(principal, "p1", 4, "Buena compra");
-
-        assertEquals(201, response.getStatusCode().value());
-        assertEquals(4, response.getBody().getRating());
-        verify(reviewService).createReview("user@demo.com", "p1", 4, "Buena compra");
-    }
-
-    @Test
-    void myReviews_returnsAuthenticatedUserReviews() {
-        Principal principal = () -> "user@demo.com";
-        when(reviewService.listByUser("user@demo.com")).thenReturn(List.of());
-
-        ResponseEntity<List<Review>> response = controller.myReviews(principal);
+        ResponseEntity<?> response = controller.approveReview(1L);
 
         assertEquals(200, response.getStatusCode().value());
-        assertEquals(0, response.getBody().size());
-        verify(reviewService).listByUser("user@demo.com");
+        assertEquals(true, review.isApproved());
+        verify(reviewRepository).save(review);
     }
 }

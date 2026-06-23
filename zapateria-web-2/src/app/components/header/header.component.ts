@@ -19,4 +19,9 @@ export class HeaderComponent {
     const user = this.authService.getCurrentUser();
     return user ? user.firstName : null;
   }
+
+  get isAdmin(): boolean {
+    const user = this.authService.getCurrentUser();
+    return user?.role === 'ADMIN';
+  }
 }

@@ -194,13 +194,13 @@ class PurchaseServiceTest {
     void updateStatus_changesAndPersistsStatus() {
         Purchase purchase = new Purchase("p200", "2", 90.0);
         PurchaseStatusUpdateRequest request = new PurchaseStatusUpdateRequest();
-        request.setStatus("entregado");
+        request.setStatus("pagado");
 
         when(purchaseRepository.findById("p200")).thenReturn(Optional.of(purchase));
         when(purchaseRepository.save(any(Purchase.class))).thenAnswer(i -> i.getArgument(0));
 
         Purchase updated = purchaseService.updateStatus("p200", request);
-        assertEquals("ENTREGADO", updated.getStatus());
+        assertEquals("PAGADO", updated.getStatus());
     }
 
     private static CheckoutRequest checkoutRequest(String productId, int qty, String size, String color,

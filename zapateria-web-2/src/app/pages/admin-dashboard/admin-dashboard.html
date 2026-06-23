@@ -24,6 +24,7 @@
         <a class="nav-link" [class.active]="activeSection === 'usuarios'" (click)="mostrarSeccion('usuarios')"><i class="fas fa-users"></i> Usuarios</a>
         <a class="nav-link" [class.active]="activeSection === 'productos'" (click)="mostrarSeccion('productos')"><i class="fas fa-box"></i> Productos</a>
         <a class="nav-link" [class.active]="activeSection === 'categorias'" (click)="mostrarSeccion('categorias')"><i class="fas fa-tags"></i> Categorías</a>
+        <a class="nav-link" [class.active]="activeSection === 'resenas'" (click)="mostrarSeccion('resenas')"><i class="fas fa-comment"></i> Reseñas</a>
         <a class="nav-link" [class.active]="activeSection === 'ordenes'" (click)="mostrarSeccion('ordenes')"><i class="fas fa-shopping-cart"></i> Órdenes</a>
 
         <button class="btn logout" (click)="logout()">Cerrar sesión</button>
@@ -37,9 +38,26 @@
                 <div class="card stat"><div class="stat-number">{{stats.sales}}</div><div class="stat-label">Ventas</div></div>
                 <div class="card stat"><div class="stat-number">{{stats.revenue | currency}}</div><div class="stat-label">Ingresos</div></div>
             </div>
-            <div class="card">
-                <h2>Panel de administración</h2>
-                <p>Bienvenido al panel de control de FootStyle.</p>
+            
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3><i class="fas fa-users"></i> Top Compradores</h3>
+                    <div *ngFor="let b of analytics.topBuyers" class="bar-item">
+                        <div class="bar-label">{{b[0]}} <span>{{b[1]}} compras</span></div>
+                        <div class="bar-container"><div class="bar-fill" [style.width]="(b[1] / analytics.topBuyers[0][1] * 100) + '%'"></div></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-box"></i> Productos más vendidos</h3>
+                    <div *ngFor="let p of analytics.topProducts" class="bar-item">
+                        <div class="bar-label">{{p[0]}} <span>{{p[1]}} unidades</span></div>
+                        <div class="bar-container"><div class="bar-fill" [style.width]="(p[1] / analytics.topProducts[0][1] * 100) + '%'"></div></div>
+                    </div>
+                </div>
+                <div class="card highlight">
+                    <h3><i class="fas fa-calendar-alt"></i> Mes con más ventas</h3>
+                    <div class="peak-month">{{analytics.peakMonth}}</div>
+                </div>
             </div>
         </div>
 
@@ -96,6 +114,37 @@
                             <td class="actions">
                                 <button class="btn-icon" title="Editar" (click)="initCategoryForm(c)"><i class="fas fa-edit"></i></button>
                                 <button class="btn-icon btn-danger" title="Eliminar" (click)="deleteCategory(c.id)"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div *ngIf="activeSection === 'resenas'">
+            <div class="card">
+                <h3>Gestión de Reseñas</h3>
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Producto</th>
+                            <th>Comentario</th>
+                            <th>Calificación</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let r of reviews">
+                            <td>{{r.userId}}</td>
+                            <td>{{r.product?.name}}</td>
+                            <td>{{r.comment}}</td>
+                            <td>{{r.rating}}</td>
+                            <td><span class="badge" [class.badge-admin]="r.approved">{{r.approved ? 'Aprobado' : 'Pendiente'}}</span></td>
+                            <td class="actions">
+                                <button *ngIf="!r.approved" class="btn-icon" title="Aprobar" (click)="approveReview(r.id)"><i class="fas fa-check"></i></button>
+                                <button class="btn-icon btn-danger" title="Eliminar" (click)="deleteReview(r.id)"><i class="fas fa-trash-alt"></i></button>
                             </td>
                         </tr>
                     </tbody>
@@ -164,12 +213,33 @@
             <div class="card">
                 <h3>Órdenes de Compra</h3>
                 <table class="users-table">
-                    <thead><tr><th>ID</th><th>Total</th><th>Estado</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Total</th>
+                            <th>Estado Actual</th>
+                            <th>Cambiar Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         <tr *ngFor="let o of purchases">
                             <td>{{o.id}}</td>
                             <td>{{o.total | currency}}</td>
                             <td>{{o.status}}</td>
+                            <td>
+                                <select (change)="updatePurchaseStatus(o.id, $event)">
+                                    <option value="" disabled selected>Seleccione estado</option>
+                                    <option value="REGISTRADO">Registrado</option>
+                                    <option value="EN_PROCESO">En Proceso</option>
+                                    <option value="PAGADO">Pagado</option>
+                                    <option value="EN_CAMINO">En Camino</option>
+                                    <option value="RECHAZADO">Rechazado</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary" (click)="saveStatus(o.id)">Guardar</button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

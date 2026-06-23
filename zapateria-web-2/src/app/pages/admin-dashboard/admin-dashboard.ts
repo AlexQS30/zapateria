@@ -28,18 +28,23 @@ export class AdminDashboardComponent implements OnInit {
   products: any[] = [];
   purchases: any[] = [];
   categories: any[] = [];
+  reviews: any[] = [];
+  analytics: any = { topBuyers: [], topProducts: [], peakMonth: '' };
   
   // Cache flags
   private loadedUsers = false;
   private loadedProducts = false;
   private loadedPurchases = false;
   private loadedCategories = false;
+  private loadedReviews = false;
+  private loadedAnalytics = false;
   
   stats = { users: 0, products: 0, sales: 0, revenue: 0 };
   
   currentProduct: any = null;
   currentUser: any = null;
   currentCategory: any = null;
+  tempStatuses: { [key: string]: string } = {};
   isEdit = false;
   isEditUser = false;
   isEditCategory = false;
@@ -50,6 +55,7 @@ export class AdminDashboardComponent implements OnInit {
         this.authService.logout();
     }
     this.loadStats();
+    this.loadAnalytics();
   }
 
   mostrarSeccion(seccion: string) {
@@ -58,6 +64,7 @@ export class AdminDashboardComponent implements OnInit {
     if (seccion === 'productos' && !this.loadedProducts) this.loadProducts();
     if (seccion === 'ordenes' && !this.loadedPurchases) this.loadPurchases();
     if (seccion === 'categorias' && !this.loadedCategories) this.loadCategories();
+    if (seccion === 'resenas' && !this.loadedReviews) this.loadReviews();
   }
 
   errorMessage = '';
@@ -84,6 +91,18 @@ export class AdminDashboardComponent implements OnInit {
         }
     });
   }
+
+  loadAnalytics() {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    this.http.get<any>(`${this.API_DASHBOARD}/analytics`, { headers }).subscribe(a => {
+        this.analytics = a;
+        this.loadedAnalytics = true;
+        this.cdr.detectChanges();
+    });
+  }
+
+  // ... (existing load methods)
 
   loadUsers() {
     this.isLoading = true;
@@ -170,6 +189,60 @@ export class AdminDashboardComponent implements OnInit {
         }
     });
   }
+
+  loadReviews() {
+    this.isLoading = true;
+    this.errorMessage = '';
+    console.time('LoadReviews');
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    this.http.get<any[]>(`http://localhost:8081/api/reviews`, { headers }).subscribe({
+        next: (r) => {
+            this.reviews = r;
+            this.loadedReviews = true;
+            this.isLoading = false;
+            console.timeEnd('LoadReviews');
+            this.cdr.detectChanges();
+        },
+        error: () => {
+            this.errorMessage = 'No se pudieron cargar las reseñas.';
+            this.isLoading = false;
+            this.cdr.detectChanges();
+        }
+    });
+  }
+
+  approveReview(id: number) {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    this.http.patch(`http://localhost:8081/api/reviews/${id}/approve`, {}, { headers }).subscribe(() => this.loadReviews());
+  }
+
+  deleteReview(id: number) {
+    if (!confirm("¿Eliminar reseña?")) return;
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    this.http.delete(`http://localhost:8081/api/reviews/${id}`, { headers }).subscribe(() => this.loadReviews());
+  }
+
+  updatePurchaseStatus(id: string, event: any) {
+    this.tempStatuses[id] = event.target.value;
+  }
+
+  saveStatus(id: string) {
+    const newStatus = this.tempStatuses[id];
+    if (!newStatus) return;
+    
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' });
+    
+    this.http.patch(`${this.API_PURCHASES}/${id}/status`, { status: newStatus }, { headers })
+        .subscribe(() => {
+            alert('Estado actualizado');
+            this.loadPurchases();
+        });
+  }
+
 
   initProductForm(product: any = null) {
     this.isEdit = !!product;

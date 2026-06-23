@@ -1,7 +1,14 @@
 package com.back.zapateria.model;
 
-import jakarta.persistence.*;
 import java.time.Instant;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Review {
@@ -20,6 +27,9 @@ public class Review {
 
     private String comment;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean approved;
+
     private Instant createdAt;
 
     public Review() {}
@@ -29,6 +39,7 @@ public class Review {
         this.userId = userId;
         this.rating = rating;
         this.comment = comment;
+        this.approved = false;
         this.createdAt = Instant.now();
     }
 
@@ -37,9 +48,11 @@ public class Review {
     public String getUserId() { return userId; }
     public int getRating() { return rating; }
     public String getComment() { return comment; }
+    public boolean isApproved() { return approved; }
     public Instant getCreatedAt() { return createdAt; }
     public void setProduct(Product product) { this.product = product; }
     public void setUserId(String userId) { this.userId = userId; }
     public void setRating(int rating) { this.rating = rating; }
     public void setComment(String comment) { this.comment = comment; }
+    public void setApproved(boolean approved) { this.approved = approved; }
 }

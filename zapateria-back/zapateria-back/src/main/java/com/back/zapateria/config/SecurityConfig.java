@@ -32,7 +32,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(java.util.Arrays.asList("http://localhost:8080", "http://localhost:3000", "http://localhost:4200"));
-        configuration.setAllowedMethods(java.util.Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(java.util.Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(java.util.Arrays.asList("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
@@ -76,7 +76,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/purchases/*/create").hasRole("ADMIN")
 
                 
-                .requestMatchers(HttpMethod.GET, "/api/dashboard/*").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/dashboard/*").hasRole("ADMIN") 
+                .requestMatchers(HttpMethod.PATCH, "/api/reviews/*/approve").hasRole("ADMIN")
                 // any other request requires authentication
                 .anyRequest().authenticated()
             )
