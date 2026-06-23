@@ -24,7 +24,7 @@ public class ReviewController {
     public List<Review> getAllReviews() {
         return reviewRepository.findAll();
     }
-...
+
     @PatchMapping("/{id}/approve")
     public ResponseEntity<?> approveReview(@PathVariable Long id) {
         return reviewRepository.findById(id).map(review -> {
